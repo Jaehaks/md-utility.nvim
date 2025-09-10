@@ -12,7 +12,7 @@ end
 
 ---@param cmd string external command
 M.check_cmd = function(cmd)
-	if vim.fn.is_executable(cmd) == 1 then
+	if vim.fn.executable(cmd) == 1 then
 		return true
 	else
 		vim.notify('md-utility : ' .. cmd .. ' is required but not installed!')

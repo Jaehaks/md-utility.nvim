@@ -119,6 +119,10 @@ local function get_link_data(mode)
 		elseif mode == 'wiki' then
 			link = token .. '[[' .. path .. anchor .. '|' .. title .. ']]'
 		end
+
+		if raw == '' then
+			return nil, nil
+		end
 		return link, raw
 	end
 

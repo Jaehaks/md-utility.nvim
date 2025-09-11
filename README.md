@@ -90,6 +90,8 @@ end, {buffer = true, desc = 'show linklist'})
 ```
 
 ### demo
+https://github.com/user-attachments/assets/54f61435-fb3d-4f52-9b58-eaa4a59b888f
+
 
 
 

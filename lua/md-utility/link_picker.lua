@@ -182,11 +182,13 @@ M.link_picker = function (mode)
 		return
 	end
 
+	local curfile = vim.fn.expand('%:t')
 	---@param item link_picker.picker_item
 	local function formatter(item, _)
 		local ret = {}
-		ret[#ret +1] = {item.filename .. ' ', 'SnacksPickerGitCommit'}
-		ret[#ret +1] = {item.str}
+		if item.filename ~= curfile then -- if list is curfile, doesn't show
+			ret[#ret +1] = {item.filename .. ' ', 'SnacksPickerGitCommit'}
+		end
 		return ret
 	end
 

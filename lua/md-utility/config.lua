@@ -3,7 +3,7 @@ local M = {}
 -- default configuration
 ---@type md-utility.config
 local default_config = {
-	link_picker = {
+	file_picker = {
 		ignore = {
 			'.git/',
 			'node_modules/',

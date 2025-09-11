@@ -22,7 +22,7 @@ local function get_cmd_rg(mode, path)
 	end
 
 	-- -- add ignore patterns
-	for _, pattern in ipairs(config.link_picker.ignore) do
+	for _, pattern in ipairs(config.file_picker.ignore) do
 		table.insert(cmd, '--glob=!' .. pattern .. '')
 	end
 
@@ -65,7 +65,7 @@ end
 
 
 ---@param mode string markdown|wiki
----@return link_picker.picker_item
+---@return file_picker.picker_item
 local function get_link_data(mode)
 	-- get lsp root
 	---@type vim.lsp.Client
@@ -130,7 +130,7 @@ local function get_link_data(mode)
 
 
 
-	---@type link_picker.picker_item[]
+	---@type file_picker.picker_item[]
 	local output = {}
 	for _, item in ipairs(filelist) do
 		local filename = vim.fn.fnamemodify(item, ':t')
@@ -169,7 +169,7 @@ end
 
 
 ---@param mode string markdown|wiki
-M.link_picker = function (mode)
+M.file_picker = function (mode)
 	-- check snacks is loaded
 	local snacks_ok, snacks = pcall(require, 'snacks')
 	if not snacks_ok then
@@ -178,7 +178,7 @@ M.link_picker = function (mode)
 	end
 
 	local curfile = vim.fn.expand('%:t')
-	---@param item link_picker.picker_item
+	---@param item file_picker.picker_item
 	local function formatter(item, _)
 		local ret = {}
 		if item.filename ~= curfile then -- if list is curfile, doesn't show
@@ -188,7 +188,7 @@ M.link_picker = function (mode)
 		return ret
 	end
 
-	---@param item link_picker.picker_item
+	---@param item file_picker.picker_item
 	local function confirmer(picker, item)
 		picker:close()
 		if item then
@@ -201,7 +201,7 @@ M.link_picker = function (mode)
 	-- remember state before picker start
 	local m = vim.api.nvim_get_mode()
 	local cursor = vim.api.nvim_win_get_cursor(0)
-	---@param item link_picker.picker_item
+	---@param item file_picker.picker_item
 	local function add_link(picker, item)
 		picker:close()
 		vim.api.nvim_buf_set_text(0,cursor[1]-1, cursor[2], cursor[1]-1, cursor[2], {item.link} )

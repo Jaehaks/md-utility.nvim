@@ -10,9 +10,9 @@ I will continue to add features whenever I think it's necessary
 
 # requirements
 - Markdown lsp : I use [marksman](https://github.com/artempyanykh/marksman) But it doesn't matter if you use something else.
-- [Snacks.nvim](https://github.com/folke/snacks.nvim) : picker
+- [Snacks.nvim](https://github.com/folke/snacks.nvim) : file_picker
 - [Neovim v0.11+](https://github.com/neovim/neovim)
-- [ripgrep](https://github.com/BurntSushi/ripgrep) : for link_picker
+- [ripgrep](https://github.com/BurntSushi/ripgrep) : file_picker
 
 
 # Installation
@@ -47,8 +47,8 @@ vim.lsp.config('marksman', {
 - Default configuration of `md-utility` is like this.
 ```lua
 require('md-utility').setup({
-  link_picker = {
-    -- list to ignore when link_picker() list is shown.
+  file_picker = {
+    -- list to ignore when file_picker() list is shown.
 	-- add '/' for directory, or it regards as file
     ignore = {
       '.git/',
@@ -64,7 +64,7 @@ require('md-utility').setup({
 
 # API
 
-## 1) `link_picker()`
+## 1) `file_picker()`
 
 ### Purpose
 
@@ -92,11 +92,11 @@ This function can be used in both insert and normal mode.
 ### settings
 
 ```lua
--- link_picker()
+-- file_picker()
 vim.keymap.set({'n', 'i'}, '<M-e>', function()
   -- arguments can accepts two, 'markdown'|'wkik'
   -- These are link style if you insert link using <C-l> from picker.
-  require('md-utility').link_picker('markdown')
+  require('md-utility').file_picker('markdown')
 end, {buffer = true, desc = 'show linklist'})
 ```
 

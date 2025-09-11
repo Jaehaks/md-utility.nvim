@@ -92,8 +92,8 @@ local function get_link_data(mode)
 		local path = Utils.get_relative_path(abspath, curdir, root_dir)
 		local anchor = str and
 					   str:gsub('^#+%s*', '#')              -- replace multiple # to one # as anchor mark.
-					      :gsub('[^#%w%d%s_\128-\255]', '') -- remove all special characters, remain english/digit/cjk
-						  :gsub('[%s]+', '-') or ''         -- replace all spaces to '-'
+					      :gsub('[^#%w%d%s-_\128-\255]', '') -- remove all special characters, remain english/digit/cjk
+					      :gsub('[%s-]+', '-') or ''         -- replace all spaces to '-'
 
 		-- make image token
 		local image_exts = {'png', 'bmp', 'gif', 'svg', 'webp', 'jpg', 'jpeg', 'tiff', 'tif', 'row'}

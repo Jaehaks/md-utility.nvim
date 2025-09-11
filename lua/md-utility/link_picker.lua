@@ -135,7 +135,7 @@ local function get_link_data(mode)
 	for _, item in ipairs(filelist) do
 		local filename = vim.fn.fnamemodify(item, ':t')
 		local link, raw = get_linkformat(item)
-		if link then
+		if link and raw ~= curfile then
 			table.insert(output, {
 				text     = raw,
 				file     = item,

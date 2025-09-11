@@ -95,11 +95,6 @@ local function get_link_data(mode)
 					      :gsub('[^#%w%d%s-_\128-\255]', '') -- remove all special characters, remain english/digit/cjk
 					      :gsub('[%s-]+', '-') or ''         -- replace all spaces to '-'
 
-		-- make image token
-		local image_exts = {'png', 'bmp', 'gif', 'svg', 'webp', 'jpg', 'jpeg', 'tiff', 'tif', 'row'}
-		local file_ext = vim.fn.fnamemodify(path, ':e')
-		local token = vim.tbl_contains(image_exts, file_ext) and '!' or ''
-
 		-- make link format
 		local raw = not str and path or path .. ' (' .. str .. ')'
 
@@ -115,9 +110,13 @@ local function get_link_data(mode)
 		path = (path == curfile) and '' or path
 		local link = nil
 		if mode == 'markdown' then
+			-- make image token
+			local image_exts = {'png', 'bmp', 'gif', 'svg', 'webp', 'jpg', 'jpeg', 'tiff', 'tif', 'row'}
+			local file_ext = vim.fn.fnamemodify(path, ':e')
+			local token = vim.tbl_contains(image_exts, file_ext) and '!' or ''
 			link = token .. '[' .. title .. '](' .. path .. anchor .. ')'
 		elseif mode == 'wiki' then
-			link = token .. '[[' .. path .. anchor .. '|' .. title .. ']]'
+			link = '[[' .. path .. anchor .. '|' .. title .. ']]'
 		end
 
 		if raw == '' then

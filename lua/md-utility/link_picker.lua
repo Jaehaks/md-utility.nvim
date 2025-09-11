@@ -89,6 +89,7 @@ local function get_link_data(mode)
 	---@return string? raw data of link
 	local function get_linkformat(abspath, str)
 		mode = mode or 'markdown'
+		-- encoding for link format
 		local path = Utils.get_relative_path(abspath, curdir, root_dir)
 		local anchor = str and
 					   str:gsub('^#+%s*', '#')              -- replace multiple # to one # as anchor mark.
@@ -98,13 +99,14 @@ local function get_link_data(mode)
 		-- make link format
 		local raw = not str and path or path .. ' (' .. str .. ')'
 
-		local title = ''
+		-- get title for link format
+		local title = (mode == 'wiki') and '|' or ''
 		if not str then
-			title = path
+			title = title .. path
 		elseif path == curfile then
-			title = str:gsub('^#+%s*', '')
+			title = title .. str:gsub('^#+%s*', '')
 		else
-			title = path .. ' > ' .. str:gsub('^#+%s*', '')
+			title = title .. path .. ' > ' .. str:gsub('^#+%s*', '')
 		end
 
 		path = (path == curfile) and '' or path
@@ -116,7 +118,7 @@ local function get_link_data(mode)
 			local token = vim.tbl_contains(image_exts, file_ext) and '!' or ''
 			link = token .. '[' .. title .. '](' .. path .. anchor .. ')'
 		elseif mode == 'wiki' then
-			link = '[[' .. path .. anchor .. '|' .. title .. ']]'
+			link = '[[' .. path .. anchor .. title .. ']]'
 		end
 
 		if raw == '' then

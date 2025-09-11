@@ -164,11 +164,6 @@ local function get_link_data(mode)
 		end
 	end
 
-	-- sorting by length of link
-	-- table.sort(output, function (x, y)
-	-- 	return x.textlen < y.textlen
-	-- end)
-
 	return output
 end
 
@@ -221,6 +216,13 @@ M.link_picker = function (mode)
 		format = formatter,
 		preview = 'file',
 		confirm = confirmer,
+		transform = function (item,_ )
+			item.score_add = 50000 - item.pos[1] -- default score is descent order by line number, deal up to 50000 lines
+			if item.filename == curfile then -- show current file anchor first
+				item.score_add = item.score_add + 100
+			end
+			return item
+		end,
 		actions = {
 			add_link = add_link,
 		},

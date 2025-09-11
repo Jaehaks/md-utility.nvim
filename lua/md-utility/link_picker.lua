@@ -91,7 +91,8 @@ local function get_link_data(mode)
 		mode = mode or 'markdown'
 		-- encoding for link format
 		local path = Utils.get_relative_path(abspath, curdir, root_dir)
-		local anchor = str and
+		local path_enc = path:gsub('[%s]', '%%20') -- white space must be encoded by %20 to follow link by marksman
+		local str_enc = str and
 					   str:gsub('^#+%s*', '#')              -- replace multiple # to one # as anchor mark.
 					      :gsub('[^#%w%d%s-_\128-\255]', '') -- remove all special characters, remain english/digit/cjk
 					      :gsub('[%s-]+', '-') or ''         -- replace all spaces to '-'
@@ -116,9 +117,9 @@ local function get_link_data(mode)
 			local image_exts = {'png', 'bmp', 'gif', 'svg', 'webp', 'jpg', 'jpeg', 'tiff', 'tif', 'row'}
 			local file_ext = vim.fn.fnamemodify(path, ':e')
 			local token = vim.tbl_contains(image_exts, file_ext) and '!' or ''
-			link = token .. '[' .. title .. '](' .. path .. anchor .. ')'
+			link = token .. '[' .. title .. '](' .. path_enc .. str_enc .. ')'
 		elseif mode == 'wiki' then
-			link = '[[' .. path .. anchor .. title .. ']]'
+			link = '[[' .. path_enc .. str_enc .. title .. ']]'
 		end
 
 		if raw == '' then

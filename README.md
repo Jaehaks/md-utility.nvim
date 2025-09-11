@@ -48,6 +48,8 @@ vim.lsp.config('marksman', {
 ```lua
 require('md-utility').setup({
   link_picker = {
+    -- list to ignore when link_picker() list is shown.
+	-- add '/' for directory, or it regards as file
     ignore = {
       '.git/',
       'node_modules/',
@@ -77,6 +79,15 @@ Sometimes I cannot find links without visiting the file when I forgot the headin
 These came across as inconvenient things to me. So I made this picker.
 `marksman`'s `vim.lsp.buf.definition()` is very reliable, you can found any files regardless of path in link format.
 I removed `lsp` source from `blink.cmp` after applying this.
+
+### Usages
+
+This function can be used in both insert and normal mode.
+`<CR>` is mapped to open `.md` file but it is not applied to other file like image/pdf etc..
+`<C-l>` is mapped to make link to current cursor. It remains current mode (normal / insert) when you insert it.
+
+> [!NOTE]
+> Some options to customize will be added in the future.
 
 ### settings
 

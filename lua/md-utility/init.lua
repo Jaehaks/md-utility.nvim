@@ -6,14 +6,12 @@ M.setup = function(opts)
 
 end
 
-M.config = setmetatable({}, {
-	__index = function(_, k)
-		return require('md-utility.config')[k]
+setmetatable(M, {
+	__index = function(t, k)
+		local commands = require('md-utility.commands')
+		setmetatable(t, {__index = commands})
+		return commands[k]
 	end
 })
 
-return setmetatable(M, {
-	__index = function(_, k)
-		return require('md-utility.commands')[k]
-	end
-})
+return M

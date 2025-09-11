@@ -184,6 +184,7 @@ M.link_picker = function (mode)
 		if item.filename ~= curfile then -- if list is curfile, doesn't show
 			ret[#ret +1] = {item.filename .. ' ', 'SnacksPickerGitCommit'}
 		end
+		ret[#ret +1] = {item.str}
 		return ret
 	end
 

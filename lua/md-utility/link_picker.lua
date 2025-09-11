@@ -110,7 +110,7 @@ local function get_link_data(mode)
 			title = title .. path .. ' > ' .. str:gsub('^#+%s*', '')
 		end
 
-		path = (path == curfile) and '' or path
+		path_enc = (path == curfile) and '' or path_enc
 		local link = nil
 		if mode == 'markdown' then
 			-- make image token

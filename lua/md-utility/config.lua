@@ -10,6 +10,11 @@ local default_config = {
 			'.obsidian/',
 			'.marksman.toml',
 		}
+	},
+	paste = {
+		image_path = function (ctx)
+			return ctx.cur_dir
+		end,
 	}
 }
 

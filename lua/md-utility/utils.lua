@@ -75,4 +75,36 @@ M.link_formatter = function(style, link, title)
 	return format
 end
 
+-- get index of visualized word, you need to check it is visual mode before it is executed.
+---@return integer,integer,integer,integer
+M.GetIdxVisual = function ()
+	-- caution: getpos("'>") or getpos("'<") is updated after end of visual mode
+	-- so use getpos('v') or getpos('.')
+
+	local start_pos = vim.fn.getpos('v') -- get position of start of visual box
+	local end_pos   = vim.fn.getpos('.') -- get position of end of visual box
+	local start_row, start_col = start_pos[2], start_pos[3]
+	local end_row, end_col     = end_pos[2], end_pos[3]
+
+	-- check end col regardless of non-ASCII char
+	local lines = vim.api.nvim_buf_get_lines(0, end_row - 1, end_row, false)
+	if lines[1] ~= '' then -- if it is not empty (normal mode)
+		local end_bytecol = vim.str_utfindex(lines[1], 'utf-8', end_col)
+		if end_bytecol then
+			end_col = vim.str_byteindex(lines[1], 'utf-8', end_bytecol)
+		else
+			vim.notify('Error : end_bytecol is nil', vim.log.levels.ERROR)
+		end
+	end
+	return start_row, start_col, end_row, end_col
+end
+
+M.is_AbsolutePath = function(path)
+	if M.is_WinOS() then
+		return path:match('^[%w]:[\\/]') ~= nil
+	else
+		return path:match('^/') ~= nil
+	end
+end
+
 return M

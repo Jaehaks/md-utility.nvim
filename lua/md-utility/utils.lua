@@ -8,12 +8,14 @@ end
 
 -- change separator on directory depends on OS
 ---@param path string relative path
----@param sep_to string path separator after change
----@param sep_from string path separator before change
-M.sep_unify = function(path, sep_to, sep_from)
-	sep_to = sep_to or (M.is_WinOS() and '\\' or '/')
+---@param sep_to string? path separator after change
+---@param sep_from string? path separator before change
+---@param endslash boolean? add slash end of path or not
+M.sep_unify = function(path, sep_to, sep_from, endslash)
+	sep_to = sep_to or (WinOS and '\\' or '/')
 	sep_from = sep_from or ((sep_to == '/') and '\\' or '/')
-	return path:gsub(sep_from, sep_to)
+	local endchar = endslash and sep_to or ''
+	return path:gsub('[/\\]+$', ''):gsub(sep_from, sep_to) .. endchar
 end
 
 ---@param cmd string external command
@@ -28,15 +30,15 @@ end
 
 -- get relative path based on basedir first. if not, rootdir. if not too, original file
 ---@param filepath string absolute path to make relative path
----@param basedir string absolute path which is the base
----@param rootdir string absolute path which is project root
+---@param basedir string absolute path which is the base, (it must ends with slash)
+---@param rootdir string absolute path which is project root, (it must ends with slash)
 ---@return string relative path of filepath
 M.get_relative_path = function(filepath, basedir, rootdir)
 	local path
 	if filepath:sub(1, #basedir) == basedir then
-		path = filepath:sub(#basedir + 2) -- remove leading [\\/]
+		path = filepath:sub(#basedir + 1)
 	elseif filepath:sub(1, #rootdir) == rootdir then
-		path = filepath:sub(#rootdir + 2)
+		path = filepath:sub(#rootdir + 1)
 	else
 		path = filepath
 	end

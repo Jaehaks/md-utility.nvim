@@ -70,8 +70,8 @@ local function get_link_data(mode)
 	-- get lsp root
 	---@type vim.lsp.Client
 	local client = vim.lsp.get_clients({bufnr = 0, name = 'marksman'})[1]
-	local root_dir = Utils.sep_unify(client.config.root_dir)
-	local curdir = Utils.sep_unify(vim.fn.expand('%:p:h'))
+	local root_dir = Utils.sep_unify(client.config.root_dir, nil, nil, true)
+	local curdir = Utils.sep_unify(vim.fn.expand('%:p:h'), nil, nil, true)
 	local curfile = vim.fn.expand('%:t')
 
 	-- get data

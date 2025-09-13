@@ -1,11 +1,17 @@
 local M = {}
 
+-- check OS
+local WinOS = vim.fn.has('win32') == 1
+M.is_WinOS = function()
+	return WinOS
+end
+
 -- change separator on directory depends on OS
 ---@param path string relative path
 ---@param sep_to string path separator after change
 ---@param sep_from string path separator before change
 M.sep_unify = function(path, sep_to, sep_from)
-	sep_to = sep_to or (vim.g.has_win32 and '\\' or '/')
+	sep_to = sep_to or (M.is_WinOS() and '\\' or '/')
 	sep_from = sep_from or ((sep_to == '/') and '\\' or '/')
 	return path:gsub(sep_from, sep_to)
 end

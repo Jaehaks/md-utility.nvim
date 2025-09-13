@@ -64,9 +64,9 @@ local function get_output(cmd)
 end
 
 
----@param mode string markdown|wiki
+---@param style string markdown|wiki
 ---@return file_picker.picker_item
-local function get_link_data(mode)
+local function get_link_data(style)
 	-- get lsp root
 	---@type vim.lsp.Client
 	local client = vim.lsp.get_clients({bufnr = 0, name = 'marksman'})[1]
@@ -88,7 +88,7 @@ local function get_link_data(mode)
 	---@return string? markdown line format
 	---@return string? raw data of link
 	local function get_linkformat(abspath, str)
-		mode = mode or 'markdown'
+		style = style or 'markdown'
 		-- encoding for link format
 		local path = Utils.get_relative_path(abspath, curdir, root_dir)
 		local path_enc = path:gsub('[%s]', '%%20') -- white space must be encoded by %20 to follow link by marksman
@@ -101,7 +101,7 @@ local function get_link_data(mode)
 		local raw = not str and path or path .. ' (' .. str .. ')'
 
 		-- get title for link format
-		local title = (mode == 'wiki') and '|' or ''
+		local title = (style == 'wiki') and '|' or ''
 		if not str then
 			title = title .. path
 		elseif path == curfile then
@@ -112,13 +112,13 @@ local function get_link_data(mode)
 
 		path_enc = (path == curfile) and '' or path_enc
 		local link = nil
-		if mode == 'markdown' then
+		if style == 'markdown' then
 			-- make image token
 			local image_exts = {'png', 'bmp', 'gif', 'svg', 'webp', 'jpg', 'jpeg', 'tiff', 'tif', 'row'}
 			local file_ext = vim.fn.fnamemodify(path, ':e')
 			local token = vim.tbl_contains(image_exts, file_ext) and '!' or ''
 			link = token .. '[' .. title .. '](' .. path_enc .. str_enc .. ')'
-		elseif mode == 'wiki' then
+		elseif style == 'wiki' then
 			link = '[[' .. path_enc .. str_enc .. title .. ']]'
 		end
 
@@ -168,8 +168,8 @@ local function get_link_data(mode)
 end
 
 
----@param mode string markdown|wiki
-M.file_picker = function (mode)
+---@param style string markdown|wiki
+M.file_picker = function (style)
 	-- check snacks is loaded
 	local snacks_ok, snacks = pcall(require, 'snacks')
 	if not snacks_ok then
@@ -211,7 +211,7 @@ M.file_picker = function (mode)
 		end
 	end
 
-	local output = get_link_data(mode)
+	local output = get_link_data(style)
 	snacks.picker.pick({
 		items = output,
 		format = formatter,

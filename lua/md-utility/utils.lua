@@ -45,4 +45,34 @@ M.get_relative_path = function(filepath, basedir, rootdir)
 	return M.sep_unify(path, '/')
 end
 
+-- check the filepath is image by extension
+---@param path string any file path
+M.is_image = function(path)
+	local image_exts = {'png', 'bmp', 'gif', 'svg', 'webp', 'jpg', 'jpeg', 'tiff', 'tif', 'row'}
+	local file_ext = vim.fn.fnamemodify(path, ':e')
+	return vim.tbl_contains(image_exts, file_ext)
+end
+
+-- return link format
+---@param style string markdown|wiki
+---@param link string contents of link
+---@param title string? title of link
+---@return string formatted link string
+M.link_formatter = function(style, link, title)
+	local format
+	if style == 'markdown' then
+		-- make image token
+		local token = M.is_image(link) and '!' or ''
+		title = title or ''
+		format = token .. '[' .. title .. '](' .. link .. ')'
+	elseif style == 'wiki' then
+		title = title and '|' .. title or ''
+		format = '[[' .. link .. title .. ']]'
+	else
+		vim.notify('set style correctly', vim.log.levels.ERROR)
+		format = ''
+	end
+	return format
+end
+
 return M

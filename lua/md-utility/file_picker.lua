@@ -101,26 +101,17 @@ local function get_link_data(style)
 		local raw = not str and path or path .. ' (' .. str .. ')'
 
 		-- get title for link format
-		local title = (style == 'wiki') and '|' or ''
+		local title = nil
 		if not str then
-			title = title .. path
+			title = path
 		elseif path == curfile then
-			title = title .. str:gsub('^#+%s*', '')
+			title = str:gsub('^#+%s*', '')
 		else
-			title = title .. path .. ' > ' .. str:gsub('^#+%s*', '')
+			title = path .. ' > ' .. str:gsub('^#+%s*', '')
 		end
 
 		path_enc = (path == curfile) and '' or path_enc
-		local link = nil
-		if style == 'markdown' then
-			-- make image token
-			local image_exts = {'png', 'bmp', 'gif', 'svg', 'webp', 'jpg', 'jpeg', 'tiff', 'tif', 'row'}
-			local file_ext = vim.fn.fnamemodify(path, ':e')
-			local token = vim.tbl_contains(image_exts, file_ext) and '!' or ''
-			link = token .. '[' .. title .. '](' .. path_enc .. str_enc .. ')'
-		elseif style == 'wiki' then
-			link = '[[' .. path_enc .. str_enc .. title .. ']]'
-		end
+		local link = Utils.link_formatter(style, path_enc .. str_enc, title)
 
 		if raw == '' then
 			return nil, nil

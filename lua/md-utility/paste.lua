@@ -70,6 +70,7 @@ local function get_imagepath(style, title)
 	local filename = vim.fn.fnamemodify(filepath, ':t')
 	title = title or filename
 	local relpath = Utils.get_relative_path(filepath, cur_dir, root_dir)
+	relpath = relpath:gsub('[%s]', '%%20') -- white space encoding
 	local link = Utils.link_formatter(style, relpath, title)
 	return filepath, link
 end

@@ -21,5 +21,9 @@ M.autolist_cr = function (show_marker)
 	Autolist.autolist_cr(show_marker)
 end
 
+M.autolist_o = function (show_marker)
+	Autolist.autolist_o(show_marker)
+end
+
 
 return M

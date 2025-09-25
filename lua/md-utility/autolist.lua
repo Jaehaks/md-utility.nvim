@@ -101,8 +101,7 @@ M.autolist_cr = function (show_marker)
 	return true
 end
 
--- make autolist
-M.autolist_cr = function (show_marker)
+M.autolist_o = function (show_marker)
 	if not is_validft() then
 		return false
 	end
@@ -113,14 +112,28 @@ M.autolist_cr = function (show_marker)
 		return false
 	end
 
-	-- change next line contents
-	-- vim.print(show_marker)
-	local cur_line, next_line, next_col = get_next_lines(bulletinfo, show_marker)
-	vim.api.nvim_buf_set_lines(0, row-1, row, false, {
-		cur_line,
+	-- set next line marker
+	show_marker = (show_marker == nil) and true or show_marker
+	local next_marker = get_next_marker(bulletinfo)
+	if not show_marker then
+		next_marker = next_marker:gsub('.', ' ')
+	end
+	local prev_indent = Utils.create_indent(bulletinfo.indent)
+
+	-- set next contents
+	local next_line = prev_indent .. next_marker
+	local next_col  = #(prev_indent .. next_marker)
+	if config.autoremove_cr and bulletinfo.content == '' then -- if content of list is empty, remove marker after <CR>
+		next_line = prev_indent
+		next_col  = #prev_indent
+	end
+
+	-- apply next contents
+	vim.api.nvim_buf_set_lines(0, row, row+1, false, {
 		next_line,
 	})
 	vim.api.nvim_win_set_cursor(0, {row+1, next_col})
+	vim.cmd('startinsert!')
 
 	return true
 end

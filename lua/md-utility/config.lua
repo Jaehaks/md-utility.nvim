@@ -15,6 +15,12 @@ local default_config = {
 		image_path = function (ctx)
 			return ctx.cur_dir
 		end,
+	},
+	autolist = {
+		patterns = {
+			bullet = "[-+*>]",
+			digit = "%d+[.)]", -- 1. 1)
+		}
 	}
 }
 

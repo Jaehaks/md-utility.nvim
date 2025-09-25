@@ -20,7 +20,9 @@ local default_config = {
 		patterns = {
 			bullet = "[-+*>]",
 			digit = "%d+[.)]", -- 1. 1)
-		}
+		},
+		-- if user enter <CR> in list with empty content, remove the list and go to next line
+		autoremove_cr = true,
 	}
 }
 

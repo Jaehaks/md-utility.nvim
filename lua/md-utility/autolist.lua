@@ -55,14 +55,25 @@ local function get_next_marker(bulletinfo)
 	return ''
 end
 
--- get next line contents
----@param bulletinfo autolist.bulletinfo
----@param show_marker boolean?
----@return string contents to change current line
----@return string contents to change next line
----@return number cursor position to next line
-local function get_next_lines(bulletinfo, show_marker)
-	-- set next line contents
+-- check filetype of current buffer is possible to use autolist
+---@return boolean
+local function is_validft()
+	return vim.tbl_contains({'markdown', 'text'}, vim.bo.filetype)
+end
+
+-- make autolist
+M.autolist_cr = function (show_marker)
+	if not is_validft() then
+		return false
+	end
+
+	local row = vim.api.nvim_win_get_cursor(0)[1]
+	local bulletinfo = get_bulletinfo(row)
+	if not bulletinfo then
+		return false
+	end
+
+	-- set next line marker
 	show_marker = (show_marker == nil) and true or show_marker
 	local next_marker = get_next_marker(bulletinfo)
 	if not show_marker then
@@ -70,26 +81,24 @@ local function get_next_lines(bulletinfo, show_marker)
 	end
 	local prev_indent = Utils.create_indent(bulletinfo.indent)
 
-	local cur_line = ''
-	local next_line = ''
-	local next_col = 1
-	if bulletinfo.content ~= '' then
-		cur_line    = bulletinfo.before
-		next_line   = prev_indent .. next_marker .. bulletinfo.after
-		next_col = #(prev_indent .. next_marker)
-	else -- if content of list is empty, remove marker after <CR>
-		cur_line    = prev_indent
-		next_line   = prev_indent
-		next_col = #prev_indent
+	-- set next contents
+	local cur_line  = bulletinfo.before
+	local next_line = prev_indent .. next_marker .. bulletinfo.after
+	local next_col  = #(prev_indent .. next_marker)
+	if config.autoremove_cr and bulletinfo.content == '' then -- if content of list is empty, remove marker after <CR>
+		cur_line  = prev_indent
+		next_line = prev_indent
+		next_col  = #prev_indent
 	end
 
-	return cur_line, next_line, next_col
-end
+	-- apply next contents
+	vim.api.nvim_buf_set_lines(0, row-1, row, false, {
+		cur_line,
+		next_line,
+	})
+	vim.api.nvim_win_set_cursor(0, {row+1, next_col})
 
--- check filetype of current buffer is possible to use autolist
----@return boolean
-local function is_validft()
-	return vim.tbl_contains({'markdown', 'text'}, vim.bo.filetype)
+	return true
 end
 
 -- make autolist

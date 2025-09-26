@@ -129,7 +129,7 @@ M.autolist_o = function (show_marker)
 	end
 
 	-- apply next contents
-	vim.api.nvim_buf_set_lines(0, row, row+1, false, {
+	vim.api.nvim_buf_set_lines(0, row, row, false, {
 		next_line,
 	})
 	vim.api.nvim_win_set_cursor(0, {row+1, next_col})

@@ -11,6 +11,7 @@ local Utils = require('md-utility.utils')
 ---@field punct string? rest part of marker like '.', ')' (digit type only)
 ---@field before string contents before cursor in list line
 ---@field after string contents after cursor in list line
+---@field lnum number line number of this information
 
 -- Parse list item and return components
 ---@param lnum number line number
@@ -37,6 +38,7 @@ local function get_bulletinfo(lnum)
 				punct = marker:match('%d+(.*)'),
 				before = before,
 				after = after,
+				lnum = lnum,
 			}
 		end
 	end
@@ -53,6 +55,81 @@ local function get_marker_on_cr(bulletinfo)
 		return tostring(bulletinfo.number + 1) .. bulletinfo.punct .. ' '
 	end
 	return ''
+end
+
+-- get markers when tab input
+-- It detects marker which is in similar indented line to unify list structure
+---@param bulletinfo autolist.bulletinfo
+---@param target_indent number
+---@return string marker which will be used in next line
+local function get_marker_on_tab(bulletinfo, target_indent)
+
+	-- as default, remain current marker style
+	local marker = bulletinfo.marker
+	if bulletinfo.type == 'digit' then
+		marker = 1 .. bulletinfo.punct
+	end
+
+	-- use reference from other list
+
+	---@param info autolist.bulletinfo
+	---@param is_inner boolean
+	---@param num_marker_offset number
+	---@return string
+	local function make_marker (info, is_inner, num_marker_offset)
+		if info.type == 'digit' then
+			local num = is_inner and (info.number + num_marker_offset) or 1
+			return num .. info.punct .. ' '
+		end
+		return info.marker .. ' '
+	end
+
+	---@param start_line number
+	---@param end_line number
+	---@param step number
+	---@param is_inner boolean
+	---@return string|number|nil
+	local function search_marker(start_line, end_line, step, is_inner)
+		for lnum = start_line, end_line, step do
+			local info = get_bulletinfo(lnum)
+			if info then
+				vim.print(lnum .. ' ' .. info.indent)
+				if info.indent == target_indent then
+					return make_marker(info, is_inner, -step)
+				elseif is_inner and info.indent < target_indent then
+					return step == -1 and (lnum - 1) or (lnum + 1)
+				end
+			end
+		end
+		return nil
+	end
+
+	local search_range = 50
+	local lc = vim.api.nvim_buf_line_count(0)
+
+	-- Search upwards (inner scope)
+	local result = search_marker(bulletinfo.lnum-1, math.max(1, bulletinfo.lnum - search_range), -1, true)
+	if type(result) == 'string' then return result end
+	local upper_lnum = result or 0
+
+	-- Search downwards (inner scope)
+	result = search_marker(bulletinfo.lnum+1, math.min(lc, bulletinfo.lnum + search_range), 1, true)
+	if type(result) == 'string' then return result end
+	local lower_lnum = result or 0
+
+	-- Search upwards (outer scope)
+	if upper_lnum > 0 then
+		result = search_marker(upper_lnum, math.max(1, bulletinfo.lnum - search_range), -1, false)
+		if type(result) == 'string' then return result end
+	end
+
+	-- Search downwards (outer scope)
+	if lower_lnum > 0 then
+		result = search_marker(lower_lnum, math.min(lc, bulletinfo.lnum + search_range), 1, false)
+		if type(result) == 'string' then return result end
+	end
+
+	return marker .. ' '
 end
 
 -- check filetype of current buffer is possible to use autolist
@@ -142,5 +219,36 @@ M.autolist_o = function (show_marker)
 	return true
 end
 
+M.autolist_tab = function(reverse)
+	if not is_validft() then
+		return false
+	end
+
+	local row = vim.api.nvim_win_get_cursor(0)[1]
+	local bulletinfo = get_bulletinfo(row)
+	-- If cursor is not on start of line, return
+	if not bulletinfo or (bulletinfo.content ~= bulletinfo.after) then
+		return false
+	end
+
+	-- set next line marker
+	reverse = (reverse == nil) and false or reverse
+	local level = reverse and -vim.bo.shiftwidth or vim.bo.shiftwidth
+	local tab_marker = get_marker_on_tab(bulletinfo, bulletinfo.indent + level)
+	local cur_indent = Utils.create_indent(bulletinfo.indent + level)
+
+	-- set next contents
+	local cur_line = cur_indent .. tab_marker .. bulletinfo.after
+	local next_col = #(cur_indent .. tab_marker)
+
+	-- apply next contents
+	vim.api.nvim_buf_set_lines(0, row-1, row, false, {
+		cur_line,
+	})
+	vim.api.nvim_win_set_cursor(0, {row, next_col})
+
+	return true
+
+end
 
 return M

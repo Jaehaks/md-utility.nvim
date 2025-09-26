@@ -25,6 +25,8 @@ M.autolist_o = function (show_marker)
 	return Autolist.autolist_o(show_marker)
 end
 
+M.autolist_tab = function (reverse)
+	return Autolist.autolist_tab(reverse)
 end
 
 

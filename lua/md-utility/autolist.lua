@@ -46,7 +46,7 @@ end
 -- get markers of next line
 ---@param bulletinfo autolist.bulletinfo
 ---@return string marker which will be used in next line
-local function get_next_marker(bulletinfo)
+local function get_marker_on_cr(bulletinfo)
 	if bulletinfo.type == 'bullet' then
 		return bulletinfo.marker .. ' '
 	elseif bulletinfo.type == 'digit' then
@@ -75,7 +75,7 @@ M.autolist_cr = function (show_marker)
 
 	-- set next line marker
 	show_marker = (show_marker == nil) and true or show_marker
-	local next_marker = get_next_marker(bulletinfo)
+	local next_marker = get_marker_on_cr(bulletinfo)
 	if not show_marker then
 		next_marker = next_marker:gsub('.', ' ')
 	end
@@ -114,7 +114,7 @@ M.autolist_o = function (show_marker)
 
 	-- set next line marker
 	show_marker = (show_marker == nil) and true or show_marker
-	local next_marker = get_next_marker(bulletinfo)
+	local next_marker = get_marker_on_cr(bulletinfo)
 	if not show_marker then
 		next_marker = next_marker:gsub('.', ' ')
 	end

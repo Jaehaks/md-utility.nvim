@@ -10,7 +10,7 @@ M.file_picker = function(mode)
 end
 
 M.get_config = function()
-	Config.get()
+	return Config.get()
 end
 
 M.clipboard_paste = function(style)
@@ -18,11 +18,13 @@ M.clipboard_paste = function(style)
 end
 
 M.autolist_cr = function (show_marker)
-	Autolist.autolist_cr(show_marker)
+	return Autolist.autolist_cr(show_marker)
 end
 
 M.autolist_o = function (show_marker)
-	Autolist.autolist_o(show_marker)
+	return Autolist.autolist_o(show_marker)
+end
+
 end
 
 

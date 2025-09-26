@@ -29,5 +29,9 @@ M.autolist_tab = function (reverse)
 	return Autolist.autolist_tab(reverse)
 end
 
+M.autolist_recalculate = function ()
+	return Autolist.autolist_recalculate()
+end
+
 
 return M

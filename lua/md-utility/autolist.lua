@@ -219,6 +219,7 @@ M.autolist_o = function (show_marker)
 	return true
 end
 
+-- smart tab with modifying marker
 M.autolist_tab = function(reverse)
 	if not is_validft() then
 		return false
@@ -248,7 +249,59 @@ M.autolist_tab = function(reverse)
 	vim.api.nvim_win_set_cursor(0, {row, next_col})
 
 	return true
+end
 
+-- recalculate bullet / numbers
+M.autolist_recalculate = function ()
+	if not is_validft() then
+		return false
+	end
+
+	local row = vim.api.nvim_win_get_cursor(0)[1]
+	local lc = vim.api.nvim_buf_line_count(0)
+	local bulletinfo = get_bulletinfo(row)
+	-- If cursor is not on start of line, return
+	if not bulletinfo then
+		return false
+	end
+
+	local start_num = bulletinfo.number
+	local outscope = 0
+	for lnum = row+1, lc do
+		local info = get_bulletinfo(lnum)
+		if info then
+			if info.indent < bulletinfo.indent then -- if it meet upper list, it consider that the scope is end
+				break
+			end
+			if info.indent == bulletinfo.indent then -- sublist is ignored
+				-- change marker for same indent
+				local cur_line = Utils.create_indent(info.indent)
+				if bulletinfo.type == 'digit' then
+					start_num = start_num + 1
+					cur_line = cur_line .. start_num .. bulletinfo.punct .. ' ' .. info.content
+				else
+					cur_line = cur_line .. bulletinfo.marker .. ' ' .. info.content
+				end
+				vim.api.nvim_buf_set_lines(0, lnum-1, lnum, false, {
+					cur_line,
+				})
+			end
+			outscope = 0
+		else
+			-- This conditions are considered out of recalculation scope
+			-- 1) if more than two empty lines are inserted continuously
+			-- 2) non-bullet lines which has same indentation with current line are inserted
+			local line = vim.api.nvim_buf_get_lines(0, lnum-1, lnum, false)[1]
+			if line == '' or vim.fn.indent(lnum) == bulletinfo.indent then
+				outscope = outscope + 1
+			end
+			if outscope > 1 then
+				break
+			end
+		end
+	end
+
+	return true
 end
 
 return M

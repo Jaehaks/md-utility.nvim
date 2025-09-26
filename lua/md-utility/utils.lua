@@ -112,6 +112,7 @@ end
 ---@param level integer the number of spaces to set indent before text
 ---@return string string includes indented characters
 M.create_indent = function(level)
+	level = level < 0 and 0 or level
 	local indent_char = vim.bo.expandtab and ' ' or '\t'
 	local indent_size = vim.bo.expandtab and level or level/vim.bo.shiftwidth
 	return string.rep(indent_char, indent_size)

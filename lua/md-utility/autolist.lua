@@ -61,6 +61,10 @@ local function is_validft()
 	return vim.tbl_contains({'markdown', 'text'}, vim.bo.filetype)
 end
 
+---############################################################################---
+---## commands
+---############################################################################---
+
 -- make autolist
 M.autolist_cr = function (show_marker)
 	if not is_validft() then

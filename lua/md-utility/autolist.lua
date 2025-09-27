@@ -182,6 +182,7 @@ M.autolist_cr = function (show_marker)
 	return true
 end
 
+-- make autolist with o
 M.autolist_o = function (show_marker)
 	if not is_validft() then
 		return false

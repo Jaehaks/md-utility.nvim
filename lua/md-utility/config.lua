@@ -23,6 +23,8 @@ local default_config = {
 		},
 		-- if user enter <CR> in list with empty content, remove the list and go to next line
 		autoremove_cr = true,
+		-- if user enter <TAB>, it guesses marker shape depends on adjacent usage.
+		autoguess_tab = false,
 	}
 }
 

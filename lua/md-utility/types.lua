@@ -38,6 +38,7 @@
 ---@class md-utility.config.autolist
 ---@field patterns md-utility.config.autolist.list_patterns
 ---@field autoremove_cr boolean
+---@field autoguess_tab boolean
 
 ---@class md-utility.config.autolist.list_patterns
 ---@field bullet string

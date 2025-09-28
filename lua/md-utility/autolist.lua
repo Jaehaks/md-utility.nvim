@@ -66,8 +66,8 @@ local function get_marker_on_tab(bulletinfo, target_indent)
 
 	-- as default, remain current marker style
 	local marker = bulletinfo.marker
-	if bulletinfo.type == 'digit' then
-		marker = 1 .. bulletinfo.punct
+	if not config.autoguess_tab then
+		return marker .. ' '
 	end
 
 	-- use reference from other list

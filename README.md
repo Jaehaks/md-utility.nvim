@@ -49,7 +49,7 @@ vim.lsp.config('marksman', {
 require('md-utility').setup({
   file_picker = {
     -- list to ignore when file_picker() list is shown.
-	-- add '/' for directory, or it regards as file
+    -- add '/' for directory, or it regards as file
     ignore = {
       '.git/',
       'node_modules/',
@@ -59,14 +59,24 @@ require('md-utility').setup({
   },
   paste = {
     -- fun(ctx) : string
-	-- function which returns path to paste clipboard image.
-	-- ctx.root_dir : root directory of `marksman` lsp ends with slash by OS
-	-- ctx.cur_dir : current buffer directory
-	-- If you return directory, ask filename whenever you paste.
-	-- If you return filepath, It will not ask. It is useful if you want to change filename automatically such as timer.
+    -- function which returns path to paste clipboard image.
+    -- ctx.root_dir : root directory of `marksman` lsp ends with slash by OS
+    -- ctx.cur_dir : current buffer directory
+    -- If you return directory, ask filename whenever you paste.
+    -- If you return filepath, It will not ask. It is useful if you want to change filename automatically such as timer.
     image_path = function (ctx)
       return ctx.cur_dir
     end,
+  },
+  autolist = {
+    patterns = {
+      bullet = "[-+*>]",
+      digit = "%d+[.)]", -- 1. 1)
+    },
+    -- if user enter <CR> in list with empty content, remove the list and go to next line
+    autoremove_cr = true,
+    -- if user enter <TAB>, it guesses marker shape depends on adjacent usage.
+    autoguess_tab = true,
   }
 })
 ```
@@ -159,6 +169,113 @@ end, {buffer = true, noremap = true, desc = 'Clipbaord paste'})
 
 ### demo
 https://github.com/user-attachments/assets/9900805a-ef49-4fbe-b06a-963a2d80d595
+
+
+## 3) `autolist`
+
+### Purpose
+
+It is inspired from [gaoDean/autolist.nvim](https://github.com/gaoDean/autolist.nvim) which is not managed now.
+It has some bugs to I use, so reconstruct to meet what I needs
+
+### Usages
+
+Markdown considers `(-, *, +)` as bullets and `1)`, `1.` as numbered list only.
+To convenient edit quotes, add `>` to autolist bullets as default.
+
+#### 1) `autolist_cr(show_marker)`
+If current line has bullets when you enter `<CR>`, the same marker is added to next line. \
+If you enter `<CR>` with empty contents marker like `1) |`, (`|` is cursor position). \
+The marker will be removed and go to next line if you set `autolist.autoremove_cr = true`.
+
+`show_marker` argument is true as default. If false, cursor go to next line without marker.
+But It add indentation which is same with upper line. See this example.
+
+```markdown
+<!-- before -->
+1) test |
+
+<!-- after -->
+1) test
+   |
+
+```
+
+Many terminal doesn't distinguish betwwen `<S-CR>` and `<CR>` so I prefer to use `<M-CR>`.
+
+#### 2) `autolist_o(show_marker)`
+It is similar with `autolist_cr()`. but 'o' motion.
+
+#### 3) `autolist_tab(reverse)`
+If `autoguess_tab = false`, it just indents by `vim.o.shiftwidth` with remaining current marker. \
+If `autoguess_tab = true`, It detects adjacent list style and follow it. \
+First, it detects most closed marker shape in inner scope of the parent marker,
+if there are not, it found in outer scope. Fallback is current marker shape.
+
+See demo.
+
+#### 4) `autolist_recalculate()`
+
+Auto-recalculating of markers when list are deleted is not implemented intentionally. I think it will be annoying.
+Instead of, using `recalculate()` is more reliable.
+
+It recalculates same indented markers. If the marker type is bullet, it unify all markers.
+If the marker type is digit, it reorders the numbering with ascending from the number under cursor.
+
+### settings
+
+These are setting examples using wrapper function to deal with fallback.
+If the line is not condition to execute autolist, it fallback to default key behavior
+```lua
+-- autolist <CR>
+vim.keymap.set({'i'}, '<CR>', 	function()
+  ---@param show_marker boolean
+  require('md-utility').autolist_cr(true)
+end,  {buffer = true, noremap = true, desc = '<CR> with autolist mark'})
+
+-- without autolist <M-CR>
+vim.keymap.set({'i'}, '<M-CR>', function()
+  ---@param show_marker boolean
+  require('md-utility').autolist_cr(false)
+end, {buffer = true, noremap = true, desc = '<CR> without autolist mark but add indent'})
+
+-- autolist o
+vim.keymap.set({'n'}, 'o', 	function()
+  ---@param show_marker boolean
+  require('md-utility').autolist_o(true)
+end,  {buffer = true, noremap = true, desc = '"o" with autolist mark'})
+
+-- autolist tab
+vim.keymap.set({'i'}, '<TAB>', 	function()
+  ---@param reverse boolean
+  require('md-utility').autolist_tab(false)
+end,  {buffer = true, noremap = true, desc = '<TAB> with autolist mark'})
+
+-- reverse autolist tab
+vim.keymap.set({'i'}, '<S-TAB>', function()
+  ---@param reverse boolean
+  require('md-utility').autolist_tab(true)
+end,  {buffer = true, noremap = true, desc = '<S-TAB> with autolist mark'})
+
+-- recalculate list markers
+vim.keymap.set({'n'}, '<leader>mr', function()
+  require('md-utility').autolist_recalculate()
+end,  {buffer = true, noremap = true, desc = 'recalculate list numbering'})
+```
+
+If you want to customize keys in more detail, you can use `*_raw()` APIs like this
+for `autolist_cr()`, `autolist_o()` and `autolist_tab()`.
+
+```lua
+M.autolist_cr = function (show_marker)
+	local autolist_cr = M.autolist_cr_raw(show_marker)
+	-- you can add other what you need.
+	if not autolist_cr then -- if autolist_cr_raw() isn't executed, return false
+		vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<CR>", true, false, true), "n", false)
+	end
+end
+```
+
 
 
 

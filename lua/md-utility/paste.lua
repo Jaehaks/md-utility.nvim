@@ -155,7 +155,7 @@ local function set_imagelink(style)
 	local dirpath = vim.fn.fnamemodify(filepath, ':h')
 	if vim.fn.isdirectory(dirpath) == 0 then
 		local ok = vim.fn.mkdir(dirpath, 'p')
-		if ok ~= 0 then
+		if ok ~= 1 then
 			vim.notify('mkdir is failed', vim.log.levels.ERROR)
 			return
 		end

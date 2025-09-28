@@ -111,6 +111,9 @@ local function jobstart(cmd)
 		if not data then
 			return
 		end
+		if type(data) == 'string' then
+			data = {data}
+		end
 		for _, line in ipairs(data) do
 			if line ~= '' then
 				vim.print(line)

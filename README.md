@@ -158,4 +158,7 @@ end, {buffer = true, noremap = true, desc = 'Clipbaord paste'})
 ```
 
 ### demo
+https://github.com/user-attachments/assets/9900805a-ef49-4fbe-b06a-963a2d80d595
+
+
 

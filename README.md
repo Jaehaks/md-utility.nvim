@@ -56,6 +56,17 @@ require('md-utility').setup({
       '.obsidian/',
       '.marksman.toml',
     }
+  },
+  paste = {
+    -- fun(ctx) : string
+	-- function which returns path to paste clipboard image.
+	-- ctx.root_dir : root directory of `marksman` lsp ends with slash by OS
+	-- ctx.cur_dir : current buffer directory
+	-- If you return directory, ask filename whenever you paste.
+	-- If you return filepath, It will not ask. It is useful if you want to change filename automatically such as timer.
+    image_path = function (ctx)
+      return ctx.cur_dir
+    end,
   }
 })
 ```
@@ -94,7 +105,7 @@ This function can be used in both insert and normal mode.
 ```lua
 -- file_picker()
 vim.keymap.set({'n', 'i'}, '<M-e>', function()
-  -- arguments can accepts two, 'markdown'|'wkik'
+  -- arguments can accepts one of them, 'markdown'|'wkik'
   -- These are link style if you insert link using <C-l> from picker.
   require('md-utility').file_picker('markdown')
 end, {buffer = true, desc = 'show linklist'})
@@ -105,4 +116,46 @@ end, {buffer = true, desc = 'show linklist'})
 https://github.com/user-attachments/assets/368ca644-171f-4ec8-868e-de0a14466ba9
 
 
+## 2) `clipboard_paste()`
+
+### Purpose
+
+It is useful if you want to make link to markdown file directly from system clipboard. \
+I want that the behavior is changed by type of contents in clipboard.
+
+### Usages
+
+It supports three cases of file in clipboard. `clipboard_paste()` will judge the types and paste depends on it.
+
+#### 1) Plain text
+Paste the plain text.
+
+#### 2) Web url (http:)
+If the text is started with `http(s)` or `www.` \
+<u>In normal mode,</u> It pastes in markdown/wiki link format without title. \
+<u>In visual mode,</u> It pastes in markdown/wiki link format titled with visualized word. \
+The link is not encoded to human-readable. There is no problem following link.
+
+#### 3) Image
+If the clipboard has image, It shows input prompt where you save it. \
+The prompt is pre-filled with the result of `paste.image_path`. \
+
+<u>If `image_path` is ended without extension,</u> it treats as directory and fill the folder path into the prompt.
+You just enter the filename. If you input only filename, the image will be saved as `png` file or it follows extension you inputted. \
+The clipboard image will be saved to file and link format will be inserted under cursor.
+
+<u>If `image_path` is ended with extension</u>, it treats as file and don't ask where you save it.
+
+
+### settings
+
+```lua
+-- clipboard_paste()
+vim.keymap.set({'n', 'v'}, 'P', function()
+  -- arguments can accepts one of them, 'markdown'|'wkik'
+  require('md-utility').clipboard_paste('markdown')
+end, {buffer = true, noremap = true, desc = 'Clipbaord paste'})
+```
+
+### demo
 

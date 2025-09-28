@@ -276,6 +276,9 @@ M.autolist_cr = function (show_marker)
 end
 ```
 
+### demo
+https://github.com/user-attachments/assets/5586afd9-48fe-4058-a8f6-1c98fead9c39
+
 
 
 

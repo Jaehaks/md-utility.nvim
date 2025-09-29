@@ -9,6 +9,7 @@ local Utils = require('md-utility.utils')
 ---@field marker string marker which means list pattern
 ---@field number number? number part of marker (digit type only)
 ---@field punct string? rest part of marker like '.', ')' (digit type only)
+---@field check string? character in checkbox
 ---@field before string contents before cursor in list line
 ---@field after string contents after cursor in list line
 ---@field lnum number line number of this information
@@ -25,8 +26,10 @@ local function get_bulletinfo(lnum)
 	local before = (lnum == row) and line:sub(1, col) or ''
 	local after = (lnum == row) and line:sub(col+1) or ''
 
-	for marker_type, pattern in pairs(config.patterns) do
-		local capture_pattern = '^%s*(' .. pattern .. ')%s+(.*)'
+	-- to ensure match pattern order (checkbox must match before bullet)
+	local matching_order = {'checkbox', 'bullet', 'digit'}
+	for _, marker_type in ipairs(matching_order) do
+		local capture_pattern = '^%s*(' .. config.patterns[marker_type] .. ')%s+(.*)'
 		local marker, content = line:match(capture_pattern)
 		if marker then
 			return {
@@ -34,8 +37,9 @@ local function get_bulletinfo(lnum)
 				indent = vim.fn.indent(lnum),
 				content = content,
 				marker = marker,
-				number = tonumber(marker:match('(%d+)')),
-				punct = marker:match('%d+(.*)'),
+				number = tonumber(marker:match('(%d+)')), -- for digit
+				punct = marker:match('%d+(.*)'), -- for digit
+				check = marker:match('%[(.*)%]'), -- for checkbox
 				before = before,
 				after = after,
 				lnum = lnum,
@@ -53,6 +57,8 @@ local function get_marker_on_cr(bulletinfo)
 		return bulletinfo.marker .. ' '
 	elseif bulletinfo.type == 'digit' then
 		return tostring(bulletinfo.number + 1) .. bulletinfo.punct .. ' '
+	elseif bulletinfo.type == 'checkbox' then
+		return '- [ ] '
 	end
 	return ''
 end
@@ -80,6 +86,8 @@ local function get_marker_on_tab(bulletinfo, target_indent)
 		if info.type == 'digit' then
 			local num = is_inner and (info.number + num_marker_offset) or 1
 			return num .. info.punct .. ' '
+		elseif info.type == 'checkbox' then
+			return '- [ ] '
 		end
 		return info.marker .. ' '
 	end
@@ -130,6 +138,43 @@ local function get_marker_on_tab(bulletinfo, target_indent)
 	end
 
 	return marker .. ' '
+end
+
+-- get markers of checkbox go around
+---@param bulletinfo autolist.bulletinfo?
+---@return string marker which will be used in next line
+local function get_marker_on_checkbox(bulletinfo)
+
+	-- get next mark of checkbox
+	---@param cands string[] list of checkbox candidates in config
+	---@return string mark in checkbox which will be used
+	local function get_next_checkmark(cands)
+		if not bulletinfo then
+			return ' '
+		end
+		for k, cand in ipairs(cands) do
+			local match = bulletinfo.check:match(cand)
+			if match then
+				local next_k = (k+1 > #cands and 1 or k+1)
+				-- discard escape character '%', %s is ' '
+				local result = string.gsub(cands[next_k], '%%*(.)', function (capture)
+					return capture == 's' and ' ' or capture
+				end)
+				return result
+			end
+		end
+		return ' '
+	end
+
+	-- if there is no checkbox, make empty checkbox
+	if not bulletinfo or bulletinfo.type ~= 'checkbox' then
+		return '- [ ] '
+	-- if there is checkbox, find next candidate
+	else
+		local checkbox_list = string.match(config.patterns.checkbox, '%[%[(.-)%]')
+		local cands = Utils.sep_chars(checkbox_list)
+		return '- [' .. get_next_checkmark(cands) .. '] '
+	end
 end
 
 -- check filetype of current buffer is possible to use autolist
@@ -301,6 +346,37 @@ M.autolist_recalculate = function ()
 			end
 		end
 	end
+
+	return true
+end
+
+M.autolist_checkbox = function ()
+	if not is_validft() then
+		return false
+	end
+
+	local row = vim.api.nvim_win_get_cursor(0)[1]
+	local bulletinfo = get_bulletinfo(row)
+
+	-- make checkbox if there are not.
+	local checkbox_marker = get_marker_on_checkbox(bulletinfo)
+	local cur_indent = Utils.create_indent(bulletinfo and bulletinfo.indent or vim.fn.indent(row))
+	local cur_line = ''
+	local next_col = 1
+	if not bulletinfo then
+		local line = vim.api.nvim_buf_get_lines(0, row-1, row, false)[1]
+		line = line:gsub('^%s+', '')
+		cur_line = cur_indent .. checkbox_marker .. line
+	else
+		cur_line = cur_indent .. checkbox_marker .. bulletinfo.content
+	end
+	next_col = #(cur_indent .. checkbox_marker)
+
+	-- apply next contents
+	vim.api.nvim_buf_set_lines(0, row-1, row, false, {
+		cur_line,
+	})
+	vim.api.nvim_win_set_cursor(0, {row, next_col})
 
 	return true
 end

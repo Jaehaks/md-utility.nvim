@@ -33,6 +33,10 @@ M.autolist_recalculate = function ()
 	return Autolist.autolist_recalculate()
 end
 
+M.autolist_checkbox = function ()
+	return Autolist.autolist_checkbox()
+end
+
 -- wrapper to easy use for autolist_cr_raw
 M.autolist_cr = function (show_marker)
 	local autolist_cr = M.autolist_cr_raw(show_marker)

@@ -118,4 +118,22 @@ M.create_indent = function(level)
 	return string.rep(indent_char, indent_size)
 end
 
+-- separate characters in [] pattern including escape
+---@param pattern string
+---@return string[] separated characters
+M.sep_chars = function(pattern)
+	local chars = {}
+	local i = 1
+	while i <= #pattern do
+		if pattern:sub(i,i) == '%' and i < #pattern then
+			table.insert(chars, pattern:sub(i, i+1))
+			i = i + 2
+		else
+			table.insert(chars, pattern:sub(i, i))
+			i = i + 1
+		end
+	end
+	return chars
+end
+
 return M

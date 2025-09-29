@@ -43,4 +43,5 @@
 ---@class md-utility.config.autolist.list_patterns
 ---@field bullet string
 ---@field digit string
+---@field checkbox string
 

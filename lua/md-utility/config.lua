@@ -18,8 +18,9 @@ local default_config = {
 	},
 	autolist = {
 		patterns = {
-			bullet = "[%-%+%*>]",
-			digit = "%d+[.)]", -- 1. 1)
+			bullet = "[%-%+%*>]",        -- -, +, *, >
+			digit = "%d+[.)]",           -- 1. 1)
+			checkbox = "-%s%[[x%-%s]%]", -- [x], [-], [ ]
 		},
 		-- if user enter <CR> in list with empty content, remove the list and go to next line
 		autoremove_cr = true,

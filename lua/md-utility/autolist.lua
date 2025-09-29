@@ -365,7 +365,7 @@ M.autolist_checkbox = function (step)
 	local checkbox_marker = get_marker_on_checkbox(bulletinfo, step)
 	local cur_indent = Utils.create_indent(bulletinfo and bulletinfo.indent or vim.fn.indent(row))
 	local cur_line = ''
-	local next_col = 1
+	-- local next_col = 1
 	if not bulletinfo then
 		local line = vim.api.nvim_buf_get_lines(0, row-1, row, false)[1]
 		line = line:gsub('^%s+', '')
@@ -373,13 +373,13 @@ M.autolist_checkbox = function (step)
 	else
 		cur_line = cur_indent .. checkbox_marker .. bulletinfo.content
 	end
-	next_col = #(cur_indent .. checkbox_marker)
+	-- next_col = #(cur_indent .. checkbox_marker)
 
 	-- apply next contents
 	vim.api.nvim_buf_set_lines(0, row-1, row, false, {
 		cur_line,
 	})
-	vim.api.nvim_win_set_cursor(0, {row, next_col})
+	-- vim.api.nvim_win_set_cursor(0, {row, next_col})
 
 	return true
 end

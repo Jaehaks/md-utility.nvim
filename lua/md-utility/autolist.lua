@@ -101,7 +101,6 @@ local function get_marker_on_tab(bulletinfo, target_indent)
 		for lnum = start_line, end_line, step do
 			local info = get_bulletinfo(lnum)
 			if info then
-				vim.print(lnum .. ' ' .. info.indent)
 				if info.indent == target_indent then
 					return make_marker(info, is_inner, -step)
 				elseif is_inner and info.indent < target_indent then

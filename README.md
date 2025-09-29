@@ -70,8 +70,9 @@ require('md-utility').setup({
   },
   autolist = {
     patterns = {
-      bullet = "[-+*>]",
-      digit = "%d+[.)]", -- 1. 1)
+	  bullet = "[%-%+%*>]",        -- -, +, *, >
+	  digit = "%d+[.)]",           -- 1. 1)
+	  checkbox = "-%s%[[x%-%s]%]", -- [x], [-], [ ]
     },
     -- if user enter <CR> in list with empty content, remove the list and go to next line
     autoremove_cr = true,
@@ -175,7 +176,7 @@ https://github.com/user-attachments/assets/9900805a-ef49-4fbe-b06a-963a2d80d595
 
 ### Purpose
 
-It is inspired from [gaoDean/autolist.nvim](https://github.com/gaoDean/autolist.nvim) which is not managed now.
+It is inspired from [gaoDean/autolist.nvim](https://github.com/gaoDean/autolist.nvim) which is not maintained now.
 It has some bugs to I use, so reconstruct to meet what I needs
 
 ### Usages
@@ -219,8 +220,19 @@ See demo.
 Auto-recalculating of markers when list are deleted is not implemented intentionally. I think it will be annoying.
 Instead of, using `recalculate()` is more reliable.
 
-It recalculates same indented markers. If the marker type is bullet, it unify all markers.
+It recalculates same indented markers. If the marker type is bullet, it unify all markers. \
 If the marker type is digit, it reorders the numbering with ascending from the number under cursor.
+
+#### 5) `autolist_checkbox(step)`
+
+If there is no bullet in current line, insert empty checkbox. \
+If there is bullet which is not checkbox, replace the bullet with empty checkbox. \
+If there is checkbox already, cycle through according on `autolist.checkbox` configuration.
+
+`step` means cycle step and direction. It used checkbox change. \
+If it is `1`, The checkbox will be changed to cycle in rightward direction in configuration.
+If it is `-1`, The checkbox will be changed to cycle in leftward direction in configuration.
+
 
 ### settings
 
@@ -261,6 +273,11 @@ end,  {buffer = true, noremap = true, desc = '<S-TAB> with autolist mark'})
 vim.keymap.set({'n'}, '<leader>mr', function()
   require('md-utility').autolist_recalculate()
 end,  {buffer = true, noremap = true, desc = 'recalculate list numbering'})
+
+-- cycle checkbox
+vim.keymap.set({'n', 'i'}, '<C-c>', function()
+  require('md-utility').autolist_checkbox(1)
+end,  {buffer = true, noremap = true, desc = 'cycle checkbox'})
 ```
 
 If you want to customize keys in more detail, you can use `*_raw()` APIs like this

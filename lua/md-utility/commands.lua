@@ -5,30 +5,40 @@ local Paste = require('md-utility.paste')
 local Config = require('md-utility.config')
 local Autolist = require('md-utility.autolist')
 
-M.file_picker = function(mode)
-	FilePicker.file_picker(mode)
+---@param style string
+M.file_picker = function(style)
+	FilePicker.file_picker(style)
 end
 
+---@return table
 M.get_config = function()
 	return Config.get()
 end
 
+---@param style string
 M.clipboard_paste = function(style)
 	Paste.ClipboardPaste(style)
 end
 
+---@param show_marker boolean
+---@return boolean
 M.autolist_cr_raw = function (show_marker)
 	return Autolist.autolist_cr(show_marker)
 end
 
+---@param show_marker boolean
+---@return boolean
 M.autolist_o_raw = function (show_marker)
 	return Autolist.autolist_o(show_marker)
 end
 
+---@param reverse boolean
+---@return boolean
 M.autolist_tab_raw = function (reverse)
 	return Autolist.autolist_tab(reverse)
 end
 
+---@return boolean
 M.autolist_recalculate = function ()
 	return Autolist.autolist_recalculate()
 end

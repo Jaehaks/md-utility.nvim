@@ -33,8 +33,10 @@ M.autolist_recalculate = function ()
 	return Autolist.autolist_recalculate()
 end
 
-M.autolist_checkbox = function ()
-	return Autolist.autolist_checkbox()
+---@param step number
+---@return boolean
+M.autolist_checkbox = function (step)
+	return Autolist.autolist_checkbox(step)
 end
 
 -- wrapper to easy use for autolist_cr_raw

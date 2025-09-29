@@ -143,7 +143,7 @@ end
 -- get markers of checkbox go around
 ---@param bulletinfo autolist.bulletinfo?
 ---@return string marker which will be used in next line
-local function get_marker_on_checkbox(bulletinfo)
+local function get_marker_on_checkbox(bulletinfo, step)
 
 	-- get next mark of checkbox
 	---@param cands string[] list of checkbox candidates in config
@@ -155,7 +155,8 @@ local function get_marker_on_checkbox(bulletinfo)
 		for k, cand in ipairs(cands) do
 			local match = bulletinfo.check:match(cand)
 			if match then
-				local next_k = (k+1 > #cands and 1 or k+1)
+				local next_k = (k+step > #cands and 1 or k+step) -- upper cycle
+				next_k = (next_k < 1) and #cands or next_k       -- lower cycle
 				-- discard escape character '%', %s is ' '
 				local result = string.gsub(cands[next_k], '%%*(.)', function (capture)
 					return capture == 's' and ' ' or capture
@@ -350,7 +351,9 @@ M.autolist_recalculate = function ()
 	return true
 end
 
-M.autolist_checkbox = function ()
+-- insert or cycle checkbox
+---@param step number if 1, right direction, if -1, left direction
+M.autolist_checkbox = function (step)
 	if not is_validft() then
 		return false
 	end
@@ -359,7 +362,8 @@ M.autolist_checkbox = function ()
 	local bulletinfo = get_bulletinfo(row)
 
 	-- make checkbox if there are not.
-	local checkbox_marker = get_marker_on_checkbox(bulletinfo)
+	step = step or 1
+	local checkbox_marker = get_marker_on_checkbox(bulletinfo, step)
 	local cur_indent = Utils.create_indent(bulletinfo and bulletinfo.indent or vim.fn.indent(row))
 	local cur_line = ''
 	local next_col = 1

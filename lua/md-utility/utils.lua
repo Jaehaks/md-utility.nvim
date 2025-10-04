@@ -108,6 +108,9 @@ M.get_visualidx = function ()
 	return start_row, start_col, end_row, end_col
 end
 
+-- check the argument path is absolute path
+---@param path string
+---@return boolean
 M.is_AbsolutePath = function(path)
 	if M.is_WinOS() then
 		return path:match('^[%w]:[\\/]') ~= nil

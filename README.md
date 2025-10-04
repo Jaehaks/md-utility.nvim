@@ -263,6 +263,10 @@ vim.keymap.set('v', '<leader>m-', function () md.addstrong('<sub>') end, {buffer
 
 ### demo
 
+https://github.com/user-attachments/assets/ea08d978-98b0-408c-b03d-7f694b17c0cb
+
+
+
 
 
 

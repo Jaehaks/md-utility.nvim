@@ -75,27 +75,36 @@ M.link_formatter = function(style, link, title)
 	return format
 end
 
+-- get real end column number considering non-ASCII characters
+---@param end_row number
+---@param end_col number
+---@return number
+local get_real_endcol = function (end_row, end_col)
+	local lines = vim.api.nvim_buf_get_lines(0, end_row - 1, end_row, false)[1] -- get the line where end col is in.
+	local end_bytecol = vim.str_utfindex(lines, 'utf-32', end_col) -- utf-8 means byte index, you use utf-32
+	local real_end_col = end_col
+	if end_bytecol then
+		real_end_col = vim.str_byteindex(lines, 'utf-32', end_bytecol) -- get real end byte col of end character
+	else
+		vim.notify('Error(AddStrong) : end_bytecol is nil', vim.log.levels.ERROR)
+	end
+	return real_end_col
+end
+
 -- get index of visualized word, you need to check it is visual mode before it is executed.
 ---@return integer,integer,integer,integer
-M.GetIdxVisual = function ()
+M.get_visualidx = function ()
 	-- caution: getpos("'>") or getpos("'<") is updated after end of visual mode
 	-- so use getpos('v') or getpos('.')
 
 	local start_pos = vim.fn.getpos('v') -- get position of start of visual box
 	local end_pos   = vim.fn.getpos('.') -- get position of end of visual box
-	local start_row, start_col = start_pos[2], start_pos[3]
-	local end_row, end_col     = end_pos[2], end_pos[3]
+	local start_row, start_col = start_pos[2], start_pos[3] -- byte unit, start column of start character
+	local end_row, end_col     = end_pos[2], end_pos[3] -- byte unit, start column of end character
 
-	-- check end col regardless of non-ASCII char
-	local lines = vim.api.nvim_buf_get_lines(0, end_row - 1, end_row, false)
-	if lines[1] ~= '' then -- if it is not empty (normal mode)
-		local end_bytecol = vim.str_utfindex(lines[1], 'utf-8', end_col)
-		if end_bytecol then
-			end_col = vim.str_byteindex(lines[1], 'utf-8', end_bytecol)
-		else
-			vim.notify('Error : end_bytecol is nil', vim.log.levels.ERROR)
-		end
-	end
+	-- it needs to get end column of end character as byte unit to perfect visualization.
+	-- If there are non-ASCII characters, get the exact end col
+	end_col = get_real_endcol(end_row, end_col)
 	return start_row, start_col, end_row, end_col
 end
 

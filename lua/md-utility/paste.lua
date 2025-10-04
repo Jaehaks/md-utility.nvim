@@ -140,7 +140,7 @@ end
 local function set_imagelink(style)
 
 	-- get title from visualized string. Title is nil if normal mode
-	local start_row, start_col, end_row, end_col = Utils.GetIdxVisual()
+	local start_row, start_col, end_row, end_col = Utils.get_visualidx()
 	local txt   = vim.api.nvim_buf_get_text(0, start_row-1, start_col-1, end_row-1, end_col, {})
 	local title = nil
 	if txt[1] ~= "" then -- if visual mode, title will be replaced with visualized word
@@ -188,7 +188,7 @@ M.ClipboardPaste = function (style)
 		-- if visual mode, get the visualized word and make it as link name
 		local mode = vim.fn.mode()
 		if mode == 'v' or mode == 'V' then -- if current mode is visual mode ('v') or line mode ('V')
-			local start_row, start_col, end_row, end_col = Utils.GetIdxVisual()
+			local start_row, start_col, end_row, end_col = Utils.get_visualidx()
 			local txt   = vim.api.nvim_buf_get_text(0, start_row-1, start_col-1, end_row-1, end_col, {})
 			local title = table.concat(txt, '\n')
 			local link  = Utils.link_formatter(style, clipboard_content, title)

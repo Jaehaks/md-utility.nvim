@@ -199,7 +199,6 @@ But It add indentation which is same with upper line. See this example.
 <!-- after -->
 1) test
    |
-
 ```
 
 Many terminal doesn't distinguish betwwen `<S-CR>` and `<CR>` so I prefer to use `<M-CR>`.
@@ -233,68 +232,36 @@ If there is checkbox already, cycle through according on `autolist.checkbox` con
 If it is `1`, The checkbox will be changed to cycle in rightward direction in configuration.
 If it is `-1`, The checkbox will be changed to cycle in leftward direction in configuration.
 
+## 4) `addstrong`
 
-### settings
+### Purpose
 
-These are setting examples using wrapper function to deal with fallback.
-If the line is not condition to execute autolist, it fallback to default key behavior
-```lua
--- autolist <CR>
-vim.keymap.set({'i'}, '<CR>', 	function()
-  ---@param show_marker boolean
-  require('md-utility').autolist_cr(true)
-end,  {buffer = true, noremap = true, desc = '<CR> with autolist mark'})
+To make convenient symbol insertion when you add some special symbols to highlight
+such as `**`(asterisk), `__`(underscore), `<u></u>`(html underline) etc..
 
--- without autolist <M-CR>
-vim.keymap.set({'i'}, '<M-CR>', function()
-  ---@param show_marker boolean
-  require('md-utility').autolist_cr(false)
-end, {buffer = true, noremap = true, desc = '<CR> without autolist mark but add indent'})
+### Usages
 
--- autolist o
-vim.keymap.set({'n'}, 'o', 	function()
-  ---@param show_marker boolean
-  require('md-utility').autolist_o(true)
-end,  {buffer = true, noremap = true, desc = '"o" with autolist mark'})
+1) Visualize some words.
+2) executes the function.
 
--- autolist tab
-vim.keymap.set({'i'}, '<TAB>', 	function()
-  ---@param reverse boolean
-  require('md-utility').autolist_tab(false)
-end,  {buffer = true, noremap = true, desc = '<TAB> with autolist mark'})
+#### 1) `addstrong(symbol)`
 
--- reverse autolist tab
-vim.keymap.set({'i'}, '<S-TAB>', function()
-  ---@param reverse boolean
-  require('md-utility').autolist_tab(true)
-end,  {buffer = true, noremap = true, desc = '<S-TAB> with autolist mark'})
+The `symbol` argument accepts `string` parameter which you want to insert both of side of visualized word. \
+It considers that the visualized string is non-ASCII word also.
 
--- recalculate list markers
-vim.keymap.set({'n'}, '<leader>mr', function()
-  require('md-utility').autolist_recalculate()
-end,  {buffer = true, noremap = true, desc = 'recalculate list numbering'})
-
--- cycle checkbox
-vim.keymap.set({'n', 'i'}, '<C-c>', function()
-  require('md-utility').autolist_checkbox(1)
-end,  {buffer = true, noremap = true, desc = 'cycle checkbox'})
-```
-
-If you want to customize keys in more detail, you can use `*_raw()` APIs like this
-for `autolist_cr()`, `autolist_o()` and `autolist_tab()`.
+The keymap examples are here.
 
 ```lua
-M.autolist_cr = function (show_marker)
-	local autolist_cr = M.autolist_cr_raw(show_marker)
-	-- you can add other what you need.
-	if not autolist_cr then -- if autolist_cr_raw() isn't executed, return false
-		vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<CR>", true, false, true), "n", false)
-	end
-end
+vim.keymap.set('v', '<leader>mb', function () md.addstrong('**') end, {buffer = true, desc = 'Enclose with **(bold)'})
+vim.keymap.set('v', '<leader>mh', function () md.addstrong('==') end, {buffer = true, desc = 'Enclose with ==(highlight)'})
+vim.keymap.set('v', '<leader>ms', function () md.addstrong('~~') end, {buffer = true, desc = 'Enclose with ~~(strikethrough)'})
+vim.keymap.set('v', '<leader>mu', function () md.addstrong('<u>') end, {buffer = true, desc = 'Enclose with <u>(underline)'})
+vim.keymap.set('v', '<leader>mm', function () md.addstrong('<mark>') end, {buffer = true, desc = 'Enclose with <mark>(mark highlight)'})
+vim.keymap.set('v', '<leader>m=', function () md.addstrong('<sup>') end, {buffer = true, desc = 'Enclose with <sup>(sup highlight)'})
+vim.keymap.set('v', '<leader>m-', function () md.addstrong('<sub>') end, {buffer = true, desc = 'Enclose with <sub>(sub highlight)'})
 ```
 
 ### demo
-https://github.com/user-attachments/assets/5586afd9-48fe-4058-a8f6-1c98fead9c39
 
 
 

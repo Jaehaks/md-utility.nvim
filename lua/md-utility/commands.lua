@@ -4,6 +4,7 @@ local FilePicker = require('md-utility.file_picker')
 local Paste = require('md-utility.paste')
 local Config = require('md-utility.config')
 local Autolist = require('md-utility.autolist')
+local AddStrong = require('md-utility.addstrong')
 
 ---@param style string
 M.file_picker = function(style)
@@ -49,6 +50,12 @@ M.autolist_checkbox = function (step)
 	return Autolist.autolist_checkbox(step)
 end
 
+-- add symbols to both sides of the visualized text
+---@param symbol string
+M.addstrong = function (symbol)
+	AddStrong.AddStrong(symbol)
+end
+
 -- wrapper to easy use for autolist_cr_raw
 M.autolist_cr = function (show_marker)
 	local autolist_cr = M.autolist_cr_raw(show_marker)
@@ -72,6 +79,7 @@ M.autolist_tab = function (reverse)
 		vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<TAB>", true, false, true), "n", false)
 	end
 end
+
 
 
 return M

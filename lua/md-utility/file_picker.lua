@@ -119,7 +119,7 @@ local function get_link_data(style)
 		path_enc = (path == curfile) and '' or path_enc
 		local link = Utils.link_formatter(style, path_enc .. str_enc, title)
 
-		if raw == '' then
+		if string.match(raw, '^%s*$') then
 			return nil, nil
 		end
 		return link, raw

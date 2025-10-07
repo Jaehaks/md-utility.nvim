@@ -33,7 +33,7 @@ end
 ---@return string root directory
 M.get_rootdir = function (bufnr)
 	---@return vim.lsp.Client[]
-	local clients = vim.lsp.get_clients({bufnr = bufnr}) -- check lsp is attached
+	local clients = vim.lsp.get_clients({bufnr = bufnr, name = 'marksman'}) -- check lsp is attached
 	local root = ''
 	if not vim.tbl_isempty(clients) then
 		root = clients[1].config.root_dir

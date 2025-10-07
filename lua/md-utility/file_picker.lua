@@ -67,10 +67,9 @@ end
 ---@param style string markdown|wiki
 ---@return file_picker.picker_item
 local function get_link_data(style)
-	-- get lsp root
-	---@type vim.lsp.Client
-	local client = vim.lsp.get_clients({bufnr = 0, name = 'marksman'})[1]
-	local root_dir = Utils.sep_unify(client.config.root_dir, nil, nil, true)
+	-- get root
+	local root_dir = Utils.get_rootdir(0)
+	root_dir = Utils.sep_unify(root_dir, nil, nil, true)
 	local curdir = Utils.sep_unify(vim.fn.expand('%:p:h'), nil, nil, true)
 	local curfile = vim.fn.expand('%:t')
 

@@ -90,11 +90,18 @@ local function get_link_data(style)
 		style = style or 'markdown'
 		-- encoding for link format
 		local path = Utils.get_relative_path(abspath, curdir, root_dir)
-		local path_enc = path:gsub('[%s]', '%%20') -- white space must be encoded by %20 to follow link by marksman
+		local path_enc = (style == 'markdown') and path:gsub('[%s]', '%%20') or path -- white space must be encoded by %20 in markdown format
 		local str_enc = str and
 					   str:gsub('^#+%s*', '#')              -- replace multiple # to one # as anchor mark.
-					      :gsub('[^#%w%d%s-_\128-\255]', '') -- remove all special characters, remain english/digit/cjk
-					      :gsub('[%s-]+', '-') or ''         -- replace all spaces to '-'
+					      :gsub('[^#%w%d%s-_\128-\255]', '') or '' -- remove all special characters, remain english/digit/cjk
+		if str_enc then
+			if style == 'markdown' then
+				str_enc = str_enc:gsub('[%s-]+', '-') or '' -- replace all multiple spaces/'-' to unique '-'
+			elseif style == 'wiki' then -- wikilink can use white space in link
+				str_enc = str_enc:gsub('[-]+', '-') or ''   -- replace all multiple '-' to unique '-'
+			end
+		end
+
 
 		-- make link format
 		local raw = not str and path or path .. ' (' .. str .. ')'

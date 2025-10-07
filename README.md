@@ -316,4 +316,8 @@ vim.keymap.set('n', 'gf', function () md.follow_link() end, {buffer = true, desc
 
 ### demo
 
+https://github.com/user-attachments/assets/314dfb68-85b3-4dc5-91a0-b6d2e78cca3a
+
+
+
 

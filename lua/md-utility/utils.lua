@@ -28,6 +28,21 @@ M.check_cmd = function(cmd)
 	end
 end
 
+-- get root pattern of current file to check where is root directory
+---@param bufnr integer buffer number
+---@return string root directory
+M.get_rootdir = function (bufnr)
+	---@return vim.lsp.Client[]
+	local clients = vim.lsp.get_clients({bufnr = bufnr}) -- check lsp is attached
+	local root = ''
+	if not vim.tbl_isempty(clients) then
+		root = clients[1].config.root_dir
+	else
+		root = vim.fs.root(bufnr, {'.git', '.marksman.toml'}) or vim.fn.expand('%:p:h')
+	end
+	return root
+end
+
 -- get relative path based on basedir first. if not, rootdir. if not too, original file
 ---@param filepath string absolute path to make relative path
 ---@param basedir string absolute path which is the base, (it must ends with slash)
@@ -45,8 +60,17 @@ M.get_relative_path = function(filepath, basedir, rootdir)
 	return M.sep_unify(path, '/')
 end
 
+-- check content is URL form like "https://*" or "www.*"
+---@param content string web URL form
+---@return string|nil
+M.is_url = function(content)
+	return (string.match(content, '^(https?://)')
+			or string.match(content,'^(www%.)'))
+end
+
 -- check the filepath is image by extension
 ---@param path string any file path
+---@return boolean
 M.is_image = function(path)
 	local image_exts = {'png', 'bmp', 'gif', 'svg', 'webp', 'jpg', 'jpeg', 'tiff', 'tif', 'row'}
 	local file_ext = vim.fn.fnamemodify(path, ':e')

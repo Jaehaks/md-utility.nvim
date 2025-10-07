@@ -26,6 +26,12 @@ local default_config = {
 		autoremove_cr = true,
 		-- if user enter <TAB>, it guesses marker shape depends on adjacent usage.
 		autoguess_tab = true,
+	},
+	follow_link = {
+		-- browser cli command to open web url
+		browser = 'brave',
+		-- vim command to open link .md file,   'split|vsplit|nil'
+		view = 'split',
 	}
 }
 

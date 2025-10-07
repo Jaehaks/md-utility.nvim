@@ -5,6 +5,7 @@
 ---@field file_picker md-utility.config.file_picker
 ---@field paste md-utility.config.paste
 ---@field autolist md-utility.config.autolist
+---@field follow_link md-utility.config.follow_link
 
 
 
@@ -45,3 +46,24 @@
 ---@field digit string
 ---@field checkbox string
 
+-- follow_link --------------------------------------------
+---@class md-utility.config.follow_link
+---@field browser string browser command to open web url
+---@field view string vim command to open .md file
+
+
+
+-- link_picker --------------------------------------------
+---@class link_picker.item_components
+---@field is_image boolean
+---@field title string?
+---@field link string?
+---@field category string
+---@field icon string
+---@field maxlen number the maximum length of link title among items
+
+---@class link_picker.picker_item
+---@field data link_picker.item_components
+---@field text string
+---@field file string
+---@field pos number[]

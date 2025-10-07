@@ -3,6 +3,7 @@ local M = {}
 M.setup = function(opts)
 	require("md-utility.config").set(opts)
 	require("md-utility.utils").check_cmd('rg')
+	require("md-utility.highlights").init_highlights()
 end
 
 setmetatable(M, {

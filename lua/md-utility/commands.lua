@@ -5,6 +5,7 @@ local Paste = require('md-utility.paste')
 local Config = require('md-utility.config')
 local Autolist = require('md-utility.autolist')
 local AddStrong = require('md-utility.addstrong')
+local Links = require('md-utility.links')
 
 ---@param style string
 M.file_picker = function(style)
@@ -54,6 +55,16 @@ end
 ---@param symbol string
 M.addstrong = function (symbol)
 	AddStrong.AddStrong(symbol)
+end
+
+-- show all link list on picker of current file and go to them
+M.link_picker = function ()
+	Links.link_picker()
+end
+
+-- executes proper operation depends on link type
+M.follow_link = function ()
+	Links.follow_link()
 end
 
 -- wrapper to easy use for autolist_cr_raw

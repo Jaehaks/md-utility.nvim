@@ -60,7 +60,13 @@ require('md-utility').setup({
       'node_modules/',
       '.obsidian/',
       '.marksman.toml',
-    }
+    },
+	-- Insert title when link is inserted.
+	-- When you insert external file link(not *.md file) using 'wiki', title will be removed although 'autotitle' is nil.
+	-- nil : empty title
+	-- filename : set filename as title only.
+	-- full : set filename with relative path as title.
+	autotitle = 'filename',
   },
   paste = {
     -- fun(ctx) : string
@@ -95,7 +101,7 @@ require('md-utility').setup({
 
 # API
 
-## 1) `file_picker()`
+## 1) `file_picker(style)`
 
 ### Purpose
 
@@ -113,9 +119,14 @@ I removed `lsp` source from `blink.cmp` after applying this.
 
 ### Usages
 
-This function can be used in both insert and normal mode.
-`<CR>` is mapped to open `.md` file but it is not applied to other file like image/pdf etc..
+This function can be used in both insert and normal mode. \
+`<CR>` is mapped to open `.md` file but it is not applied to other file like image/pdf etc.. \
 `<C-l>` is mapped to make link to current cursor. It remains current mode (normal / insert) when you insert it.
+
+If `style` is `markdown`, white space in file path or name will be encoded by `%20`. \
+If `style` is `wiki`, white space is allowed in link so It is remained.
+If the selected file is image file or other extension file not `*.md`, title isn't needed.
+So `autotitle` field is ignored and title in link is empty.
 
 > [!NOTE]
 > Some options to customize will be added in the future.
@@ -136,7 +147,7 @@ end, {buffer = true, desc = 'show linklist'})
 https://github.com/user-attachments/assets/368ca644-171f-4ec8-868e-de0a14466ba9
 
 
-## 2) `clipboard_paste()`
+## 2) `clipboard_paste(style)`
 
 ### Purpose
 
@@ -145,7 +156,8 @@ I want that the behavior is changed by type of contents in clipboard.
 
 ### Usages
 
-It supports three cases of file in clipboard. `clipboard_paste()` will judge the types and paste depends on it.
+It supports three cases of file in clipboard. `clipboard_paste()` will judge the types and paste depends on it. \
+You can choose link format using `style` argument.
 
 #### 1) Plain text
 Paste the plain text.

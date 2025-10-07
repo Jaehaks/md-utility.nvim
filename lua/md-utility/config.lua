@@ -13,7 +13,7 @@ local default_config = {
 		-- Insert title when link is inserted.
 		-- Forced to be false when you insert external file link(not *.md file) using 'wiki'
 		-- 'nil|full|filename'
-		autotitle = nil,
+		autotitle = 'filename',
 	},
 	paste = {
 		image_path = function (ctx)

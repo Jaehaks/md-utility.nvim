@@ -214,6 +214,7 @@ M.link_picker = function ()
 		confirm = function (picker, item)
 			picker:close()
 			if item then
+				vim.cmd("normal! m'")
 				vim.api.nvim_win_set_cursor(0, {item.pos[1], item.pos[2]}) -- go to cursor
 				vim.cmd("normal! zt")
 			end

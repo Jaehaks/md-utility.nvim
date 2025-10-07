@@ -31,16 +31,21 @@ return {
 
 
 # Configuration
+> [!CAUTION]
+> You need to add `.marksman.toml` file in markdown project root to use proper lsp function.
+> If you are using `obsidian` together, put `.marksman.toml` to the same directory where `.obsidian` is in.
+
 - configuration of `marksman`
-	- This plugin use `root_dir` of lsp, so It would recommends to set keymaps in lsp configuration
+	- This plugin use `root_dir` of lsp, so It would recommends to set keymaps in lsp configuration.
 ```lua
 vim.lsp.config('marksman', {
   on_attach = function ()
-    -- add keymaps in here
+    -- add keymaps in here,
+	-- or you can add keymaps in 'config' field of md-utility.nvim
   end,
   cmd = {'marksman', 'server'},
   filetypes = {'markdown'},
-  root_dir = '<what you want>',
+  root_marker = '.marksman.toml',
 })
 ```
 

@@ -70,14 +70,18 @@ require('md-utility').setup({
   },
   autolist = {
     patterns = {
-	  bullet = "[%-%+%*>]",        -- -, +, *, >
-	  digit = "%d+[.)]",           -- 1. 1)
-	  checkbox = "-%s%[[x%-%s]%]", -- [x], [-], [ ]
+      bullet   = "[%-%+%*>]",      -- -, +, *, >
+      digit    = "%d+[.)]",        -- 1. 1)
+      checkbox = "-%s%[[x%-%s]%]", -- [x], [-], [ ]
     },
-    -- if user enter <CR> in list with empty content, remove the list and go to next line
-    autoremove_cr = true,
-    -- if user enter <TAB>, it guesses marker shape depends on adjacent usage.
-    autoguess_tab = true,
+    autoremove_cr = true, -- if user enter <CR> in list with empty content, remove the list and go to next line
+    autoguess_tab = true, -- if user enter <TAB>, it guesses marker shape depends on adjacent usage.
+  },
+  follow_link = {
+      image_opener = 'start ""', -- image viewer command when the link under cursor is image.
+      web_opener   = 'brave',    -- web browser command when the link under cursor is web link.
+      md_opener    = 'split',    -- vim command when the link under cursor is file or header link.
+      file_opener  = 'start ""', -- system command when the link under cursor is other file which is not image or md file
   }
 })
 ```
@@ -266,7 +270,50 @@ vim.keymap.set('v', '<leader>m-', function () md.addstrong('<sub>') end, {buffer
 https://github.com/user-attachments/assets/ea08d978-98b0-408c-b03d-7f694b17c0cb
 
 
+## 5) `link_picker()`
+
+### Purpose
+
+Open picker which shows all links(image, file, web) in current buffer.
+
+### Usages
+
+1) Open picker
+2) If you select a link with `<CR>`, focus will move to the line.
 
 
+```lua
+vim.keymap.set('n', '<leader>ml', function () md.link_picker() end, {buffer = true, desc = 'Open link picker'})
+```
+
+### demo
+
+See below demo
+
+## 6) `follow_link()`
+
+### Purpose
+
+It is like smart version of `gf` in markdown file.
+
+### Usages
+
+Place your cursor over the link and run `follow_link()`.
+
+1) If the link is <u>web url</u> (`https://` or `www.`), open browser using `web_opener` command.
+2) If the link is <u>image</u>,  open image file using `image_opener` command. \
+   It is useful on Windows If the terminal don't allowed preview feature. \
+   Previewing in terminal which supports preview doesn't be implemented except of `wezterm` on Windows. \
+   You can define the opener field using `function`.
+3) If the link is <u>internal file</u> (`#heading`, `.md` or `.markdown`), open the file using `md_opener`. \
+   It can move focus to the line. If `md_opener = nil`, file is opened in current focused window.
+4) If the link is <u>external file</u> which is in other category open the file using `file_opener`.
+
+
+```lua
+vim.keymap.set('n', 'gf', function () md.follow_link() end, {buffer = true, desc = 'Follow link'})
+```
+
+### demo
 
 

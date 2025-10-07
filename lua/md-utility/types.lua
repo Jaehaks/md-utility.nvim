@@ -48,8 +48,9 @@
 
 -- follow_link --------------------------------------------
 ---@class md-utility.config.follow_link
----@field browser string browser command to open web url
----@field view string vim command to open .md file
+---@field image_opener string
+---@field web_opener string
+---@field file_opener string
 
 
 

@@ -18,20 +18,17 @@ local default_config = {
 	},
 	autolist = {
 		patterns = {
-			bullet = "[%-%+%*>]",        -- -, +, *, >
-			digit = "%d+[.)]",           -- 1. 1)
+			bullet   = "[%-%+%*>]",      -- -, +, *, >
+			digit    = "%d+[.)]",        -- 1. 1)
 			checkbox = "-%s%[[x%-%s]%]", -- [x], [-], [ ]
 		},
-		-- if user enter <CR> in list with empty content, remove the list and go to next line
-		autoremove_cr = true,
-		-- if user enter <TAB>, it guesses marker shape depends on adjacent usage.
-		autoguess_tab = true,
+		autoremove_cr = true, -- if user enter <CR> in list with empty content, remove the list and go to next line
+		autoguess_tab = true, -- if user enter <TAB>, it guesses marker shape depends on adjacent usage.
 	},
 	follow_link = {
-		-- browser cli command to open web url
-		browser = 'brave',
-		-- vim command to open link .md file,   'split|vsplit|nil'
-		view = 'split',
+		image_opener = 'start ""', -- image viewer command when the link under cursor is image.
+		web_opener   = 'brave',    -- web browser command when the link under cursor is web link.
+		file_opener  = 'split',    -- vim command when the link under cursor is file or header link.
 	}
 }
 

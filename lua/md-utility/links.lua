@@ -218,7 +218,6 @@ M.link_picker = function ()
 				vim.cmd("normal! zt")
 			end
 		end,
-
 	})
 end
 
@@ -346,9 +345,9 @@ M.follow_link = function ()
 
 	if Utils.is_url(path) then
 		if vim.g.has_win32 then
-			os.execute('start ' .. config.browser .. ' ' .. path) -- if url is web link, use brave web browser
+			os.execute('start ' .. config.web_opener .. ' ' .. path) -- if url is web link, use brave web browser
 		else
-			os.execute(config.browser .. ' \'' ..  path .. '\'' .. ' > /dev/null 2>&1 &') -- if url is web link, use brave web browser
+			os.execute(config.web_opener .. ' \'' ..  path .. '\'' .. ' > /dev/null 2>&1 &') -- if url is web link, use brave web browser
 		end
 	elseif Utils.is_image(path) then
 		-- get absolute path of image file
@@ -363,15 +362,11 @@ M.follow_link = function ()
 		if os.getenv('WEZTERM_PANE') ~= nil then
 			vim.api.nvim_command('silent !wezterm cli split-pane --horizontal -- powershell wezterm imgcat ' .. '\'' ..  filepath .. '\'' .. ' ; pause')
 		else
-			if Utils.is_WinOS() then
-				os.execute('start "" "' .. filepath .. '"') -- use default open tool for windows
-			else
-				os.execute('xdg-open "' .. filepath .. '"') -- use default open tool for windows
-			end
+			os.execute(config.image_opener .. ' "' .. filepath .. '"') -- use default open tool for windows
 		end
 	else
-		if config.view then
-			vim.cmd(config.view)
+		if config.file_opener then
+			vim.cmd(config.file_opener)
 		end
 		vim.lsp.buf.definition() -- open buffer using marksman lsp
 	end

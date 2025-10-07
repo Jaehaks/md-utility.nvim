@@ -110,14 +110,15 @@ end
 ---@return string formatted link string
 M.link_formatter = function(style, link, title)
 	local format
+	local token = M.is_image(link) and '!' or ''
 	if style == 'markdown' then
 		-- make image token
-		local token = M.is_image(link) and '!' or ''
 		title = title or ''
 		format = token .. '[' .. title .. '](' .. link .. ')'
 	elseif style == 'wiki' then
 		title = title and '|' .. title or ''
-		format = '[[' .. link .. title .. ']]'
+		if token == '!' then title = '' end -- title is not allowed to file
+		format = token .. '[[' .. link .. title .. ']]'
 	else
 		vim.notify('set style correctly', vim.log.levels.ERROR)
 		format = ''

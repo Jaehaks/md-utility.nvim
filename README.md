@@ -9,10 +9,13 @@ I will continue to add features whenever I think it's necessary
 
 
 # requirements
-- Markdown lsp : I use [marksman](https://github.com/artempyanykh/marksman) But it doesn't matter if you use something else.
-- [Snacks.nvim](https://github.com/folke/snacks.nvim) : file_picker
+- [marksman](https://github.com/artempyanykh/marksman) : markdown lsp
+	- Now, only `marksman` lsp is required because lsp functions are the most reliable. \
+	  If you want to add other, make issue.
+- [Snacks.nvim](https://github.com/folke/snacks.nvim) : for `file_picker()`
+- [fd](https://github.com/sharkdp/fd) : for `follow_link`
+- [ripgrep](https://github.com/BurntSushi/ripgrep) : for `follow_link()`, `file_picker()`
 - [Neovim v0.11+](https://github.com/neovim/neovim)
-- [ripgrep](https://github.com/BurntSushi/ripgrep) : file_picker
 
 
 # Installation

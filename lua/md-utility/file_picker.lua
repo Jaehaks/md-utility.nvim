@@ -137,6 +137,7 @@ local function get_link_data(style)
 				text     = raw,
 				file     = item,
 				pos      = {1, 1},
+				score    = 0,
 				filename = filename, -- manual
 				link     = link,     -- manual
 				textlen  = #link,    -- manual
@@ -153,6 +154,7 @@ local function get_link_data(style)
 				text     = raw,
 				file     = filepath,
 				pos      = {tonumber(lnum), 1},
+				score    = (filename == curfile) and 100 or 0,
 				filename = filename, -- manual
 				link     = link,     -- manual
 				textlen  = #raw,     -- manual
@@ -215,10 +217,8 @@ M.file_picker = function (style)
 		preview = 'file',
 		confirm = confirmer,
 		transform = function (item,_ )
-			item.score_add = 50000 - item.pos[1] -- default score is descent order by line number, deal up to 50000 lines
-			if item.filename == curfile then -- show current file anchor first
-				item.score_add = item.score_add + 100
-			end
+			item.score_add = item.score
+			item.score_add = item.score_add + (50000 - item.pos[1]*0.01) -- default score is descent order by line number, deal up to 50000 lines
 			return item
 		end,
 		actions = {

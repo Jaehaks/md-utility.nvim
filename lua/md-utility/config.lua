@@ -11,8 +11,10 @@ local default_config = {
 			'.marksman.toml',
 		},
 		-- Insert title when link is inserted.
-		-- Forced to be false when you insert external file link(not *.md file) using 'wiki'
-		-- 'nil|full|filename'
+		-- When you insert external file link(not *.md file) using 'wiki', title will be removed although 'autotitle' is nil.
+		-- nil : empty title
+		-- filename : set filename as title only.
+		-- full : set filename with relative path as title.
 		autotitle = 'filename',
 	},
 	paste = {

@@ -40,7 +40,7 @@ M.get_rootdir = function (bufnr)
 	else
 		root = vim.fs.root(bufnr, {'.git', '.marksman.toml'}) or vim.fn.expand('%:p:h')
 	end
-	return root
+	return root or vim.fn.expand('%:p:h')
 end
 
 -- get relative path based on basedir first. if not, rootdir. if not too, original file
@@ -75,6 +75,32 @@ M.is_image = function(path)
 	local image_exts = {'png', 'bmp', 'gif', 'svg', 'webp', 'jpg', 'jpeg', 'tiff', 'tif', 'row'}
 	local file_ext = vim.fn.fnamemodify(path, ':e')
 	return vim.tbl_contains(image_exts, file_ext)
+end
+
+-- check the filepath is markdown file
+---@param path string any file path
+---@return boolean
+M.is_internalfile = function(path)
+	-- check path is regarded internal heading of current buffer
+	if string.match(path, '^#') then
+		return true
+	end
+
+	-- check path is markdown file
+	local file_ext = vim.fn.fnamemodify(path, ':e')
+	if vim.tbl_contains({'md', 'markdown'}, file_ext) then
+		return true
+	elseif file_ext ~= '' then -- some other file
+		return false
+	end
+
+	-- check the file is hidden file
+	local filename = vim.fn.fnamemodify(path, ':t')
+	if string.match(filename, '^%.') then
+		return false
+	end
+
+	return true
 end
 
 -- return link format

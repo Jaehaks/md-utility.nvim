@@ -342,6 +342,7 @@ M.follow_link = function ()
 	end
 	-- get only link pattern from full link
 	local path = get_linkpath(raw, style)
+	path = path:gsub('%%20', ' ') -- decode %20 to white space
 
 	if Utils.is_url(path) then
 		if vim.g.has_win32 then
@@ -349,7 +350,12 @@ M.follow_link = function ()
 		else
 			os.execute(config.web_opener .. ' \'' ..  path .. '\'' .. ' > /dev/null 2>&1 &') -- if url is web link, use brave web browser
 		end
-	elseif Utils.is_image(path) then
+	elseif Utils.is_internalfile(path) then
+		if config.md_opener then
+			vim.cmd(config.md_opener)
+		end
+		vim.lsp.buf.definition() -- open buffer using marksman lsp
+	else
 		-- get absolute path of image file
 		local rootdir = Utils.get_rootdir(0)
 		local filepath = get_absolutefile(rootdir, path)
@@ -358,17 +364,16 @@ M.follow_link = function ()
 			return
 		end
 
-		-- check the terminal is wezterm (use wezterm for following image)
-		if os.getenv('WEZTERM_PANE') ~= nil then
-			vim.api.nvim_command('silent !wezterm cli split-pane --horizontal -- powershell wezterm imgcat ' .. '\'' ..  filepath .. '\'' .. ' ; pause')
+		if Utils.is_image(path) then
+			-- check the terminal is wezterm (use wezterm for following image)
+			if os.getenv('WEZTERM_PANE') ~= nil then
+				vim.api.nvim_command('silent !wezterm cli split-pane --horizontal -- powershell wezterm imgcat ' .. '\'' ..  filepath .. '\'' .. ' ; pause')
+			else
+				os.execute(config.image_opener .. ' "' .. filepath .. '"')
+			end
 		else
-			os.execute(config.image_opener .. ' "' .. filepath .. '"') -- use default open tool for windows
+			os.execute(config.file_opener .. ' "' .. filepath .. '"')
 		end
-	else
-		if config.file_opener then
-			vim.cmd(config.file_opener)
-		end
-		vim.lsp.buf.definition() -- open buffer using marksman lsp
 	end
 end
 

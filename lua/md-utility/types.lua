@@ -50,6 +50,7 @@
 ---@class md-utility.config.follow_link
 ---@field image_opener string
 ---@field web_opener string
+---@field md_opener string
 ---@field file_opener string
 
 

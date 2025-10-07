@@ -28,7 +28,8 @@ local default_config = {
 	follow_link = {
 		image_opener = 'start ""', -- image viewer command when the link under cursor is image.
 		web_opener   = 'brave',    -- web browser command when the link under cursor is web link.
-		file_opener  = 'split',    -- vim command when the link under cursor is file or header link.
+		md_opener    = 'split',    -- vim command when the link under cursor is file or header link.
+		file_opener  = 'start ""', -- system command when the link under cursor is other file which is not image or md file
 	}
 }
 

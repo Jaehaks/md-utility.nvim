@@ -13,6 +13,7 @@
 -- file_picker --------------------------------------------
 ---@class md-utility.config.file_picker
 ---@field ignore string[]
+---@field autotitle string?
 
 ---@class file_picker.picker_item
 ---@field text string raw data shown in picker

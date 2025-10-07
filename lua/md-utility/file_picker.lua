@@ -1,14 +1,12 @@
 local M = {}
 
-local Config = require('md-utility.config')
+local config = require('md-utility.config').get().file_picker
 local Utils = require('md-utility.utils')
 
 ---@param mode string 'filelist(get all file list only)'|'headerlist(get header list)'
 ---@param path string absolute path to find files
 ---@return string[] cmd table
 local function get_cmd_rg(mode, path)
-	local config = Config.get()
-
 	local cmd = {
 	    'rg',
 		'--no-heading', -- with inline filename, not grouped
@@ -22,7 +20,7 @@ local function get_cmd_rg(mode, path)
 	end
 
 	-- -- add ignore patterns
-	for _, pattern in ipairs(config.file_picker.ignore) do
+	for _, pattern in ipairs(config.ignore) do
 		table.insert(cmd, '--glob=!' .. pattern .. '')
 	end
 
@@ -108,12 +106,20 @@ local function get_link_data(style)
 
 		-- get title for link format
 		local title = nil
-		if not str then
-			title = path
-		elseif path == curfile then
-			title = str:gsub('^#+%s*', '')
-		else
-			title = path .. ' > ' .. str:gsub('^#+%s*', '')
+		if config.autotitle then
+			-- if autotitle = 'filename', title use filename only
+			local path_title = path
+			if config.autotitle == 'filename' then
+				path_title = vim.fn.fnamemodify(path, ':t')
+			end
+			-- make title
+			if not str then
+				title = path_title
+			elseif path == curfile then
+				title = str:gsub('^#+%s*', '')
+			else
+				title = path_title .. ' > ' .. str:gsub('^#+%s*', '')
+			end
 		end
 
 		path_enc = (path == curfile) and '' or path_enc

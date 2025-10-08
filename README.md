@@ -2,7 +2,7 @@
 A collection of useful utilities in markdown
 
 # Why?
-It is just small functions to use in markdown for efficient editing because there are not plugins to meet my purpose.
+It is just collection of small functions to use in markdown for efficient editing because there are not plugins to meet my purpose.
 I use [marksman](https://github.com/artempyanykh/marksman) for markdown lsp and make auxiliary tools to assist.
 
 I will continue to add features whenever I think it's necessary

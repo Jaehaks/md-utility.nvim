@@ -132,7 +132,7 @@ end
 ---@return number
 local get_real_endcol = function (end_row, end_col)
 	local lines = vim.api.nvim_buf_get_lines(0, end_row - 1, end_row, false)[1] -- get the line where end col is in.
-	local end_bytecol = vim.str_utfindex(lines, 'utf-32', end_col) -- utf-8 means byte index, you use utf-32
+	local end_bytecol = vim.str_utfindex(lines, 'utf-32', end_col, false) -- utf-8 means byte index, you use utf-32
 	local real_end_col = end_col
 	if end_bytecol then
 		real_end_col = vim.str_byteindex(lines, 'utf-32', end_bytecol) -- get real end byte col of end character

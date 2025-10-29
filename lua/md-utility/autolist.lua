@@ -51,14 +51,21 @@ end
 
 -- get markers of next line
 ---@param bulletinfo autolist.bulletinfo
+---@param show_marker boolean
 ---@return string marker which will be used in next line
-local function get_marker_on_cr(bulletinfo)
+local function get_marker_on_cr(bulletinfo, show_marker)
+	local marker = nil
 	if bulletinfo.type == 'bullet' then
-		return bulletinfo.marker .. ' '
+		marker = bulletinfo.marker .. ' '
 	elseif bulletinfo.type == 'digit' then
-		return tostring(bulletinfo.number + 1) .. bulletinfo.punct .. ' '
+		local next_number = show_marker and (bulletinfo.number+1) or bulletinfo.number
+		marker = tostring(next_number) .. bulletinfo.punct .. ' '
 	elseif bulletinfo.type == 'checkbox' then
-		return '- [ ] '
+		marker = '- [ ] '
+	end
+
+	if marker then
+		return show_marker and marker or string.gsub(marker, '.', ' ')
 	end
 	return ''
 end
@@ -201,10 +208,7 @@ M.autolist_cr = function (show_marker)
 
 	-- set next line marker
 	show_marker = (show_marker == nil) and true or show_marker
-	local next_marker = get_marker_on_cr(bulletinfo)
-	if not show_marker then
-		next_marker = next_marker:gsub('.', ' ')
-	end
+	local next_marker = get_marker_on_cr(bulletinfo, show_marker)
 	local prev_indent = Utils.create_indent(bulletinfo.indent)
 
 	-- set next contents
@@ -241,10 +245,7 @@ M.autolist_o = function (show_marker)
 
 	-- set next line marker
 	show_marker = (show_marker == nil) and true or show_marker
-	local next_marker = get_marker_on_cr(bulletinfo)
-	if not show_marker then
-		next_marker = next_marker:gsub('.', ' ')
-	end
+	local next_marker = get_marker_on_cr(bulletinfo, show_marker)
 	local prev_indent = Utils.create_indent(bulletinfo.indent)
 
 	-- set next contents

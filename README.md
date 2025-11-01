@@ -123,13 +123,15 @@ I removed `lsp` source from `blink.cmp` after applying this.
 ### Usages
 
 This function can be used in both insert and normal mode. \
-`<CR>` is mapped to open `.md` file but it is not applied to other file like image/pdf etc.. \
-`<C-l>` is mapped to make link to current cursor. It remains current mode (normal / insert) when you insert it.
+`<C-l>` is mapped to open `.md` file but it is not applied to other file like image/pdf etc.. \
+`<CR>` is mapped to make link to current cursor location. It remains current mode (normal / insert) when you insert it.
 
 If `style` is `markdown`, white space in file path or name will be encoded by `%20`. \
 If `style` is `wiki`, white space is allowed in link so It is remained.
 If the selected file is image file or other extension file not `*.md`, title isn't needed.
 So `autotitle` field is ignored and title in link is empty.
+
+It supports to use in `visual` mode, the visualized word will be used as link title when insert link.
 
 > [!NOTE]
 > Some options to customize will be added in the future.
@@ -138,7 +140,7 @@ So `autotitle` field is ignored and title in link is empty.
 
 ```lua
 -- file_picker()
-vim.keymap.set({'n', 'i'}, '<M-e>', function()
+vim.keymap.set({'n', 'i', 'v'}, '<M-e>', function()
   -- arguments can accepts one of them, 'markdown'|'wkik'
   -- These are link style if you insert link using <C-l> from picker.
   require('md-utility').file_picker('markdown')

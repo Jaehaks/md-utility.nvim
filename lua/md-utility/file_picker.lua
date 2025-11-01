@@ -3,6 +3,12 @@ local M = {}
 local config = require('md-utility.config').get().file_picker
 local Utils = require('md-utility.utils')
 
+---@class state
+---@field visual_range number[] start_row, start_col, end_row, end_col
+local state = {
+	visual_range = {}
+}
+
 ---@param mode string 'filelist(get all file list only)'|'headerlist(get header list)'
 ---@param path string absolute path to find files
 ---@return string[] cmd table
@@ -122,6 +128,17 @@ local function get_link_data(style)
 			end
 		end
 
+		-- if visual mode, use it as title
+		local m = vim.api.nvim_get_mode()
+		if m.mode == 'v' or m.mode == 'V' then
+			local start_row, start_col, end_row, end_col = Utils.get_visualidx() -- get index of visualized word
+			state.visual_range = {start_row, start_col, end_row, end_col}
+			local contents = vim.api.nvim_buf_get_text(0, start_row-1, start_col-1, end_row-1, end_col, {})
+			title = vim.trim(table.concat(contents, ' '))
+		else
+			state.visual_range = {}
+		end
+
 		path_enc = (path == curfile) and '' or path_enc
 		local link = Utils.link_formatter(style, path_enc .. str_enc, title)
 
@@ -203,14 +220,20 @@ M.file_picker = function (style)
 		end
 	end
 
-	-- remember state before picker start
 	local m = vim.api.nvim_get_mode()
-	local cursor = vim.api.nvim_win_get_cursor(0)
+	-- remember state before picker start
 	---@param item file_picker.picker_item
 	local function add_link(picker, item)
 		picker:close()
+		if m.mode == 'v' or m.mode == 'V' then
+			if not vim.tbl_isempty(state.visual_range) then
+				local sr, sc, er, ec = unpack(state.visual_range)
+				vim.api.nvim_buf_set_text(0, sr-1, sc-1, er-1, ec, {''})
+			end
+		end
+		local cursor = vim.api.nvim_win_get_cursor(0)
 		vim.api.nvim_buf_set_text(0,cursor[1]-1, cursor[2], cursor[1]-1, cursor[2], {item.link} )
-		vim.api.nvim_win_set_cursor(0, {cursor[1], cursor[2]})
+		vim.api.nvim_win_set_cursor(0, {cursor[1], cursor[2]+1})
 		if m.mode == 'i' then
 			vim.api.nvim_input('i')
 		end

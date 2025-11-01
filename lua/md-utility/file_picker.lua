@@ -221,19 +221,19 @@ M.file_picker = function (style)
 		items = output,
 		format = formatter,
 		preview = 'file',
-		confirm = confirmer,
+		confirm = add_link, -- '<CR>', add links
 		transform = function (item,_ )
 			item.score_add = item.score
 			item.score_add = item.score_add + (50000 - item.pos[1]*0.01) -- default score is descent order by line number, deal up to 50000 lines
 			return item
 		end,
 		actions = {
-			add_link = add_link,
+			confirmer = confirmer,
 		},
 		win = {
 			input = {
 				keys = {
-					["<C-l>"] = { "add_link", mode = { "n", "i" }, desc = "add markdown link from item" },
+					["<C-l>"] = { "confirmer", mode = { "n", "i" }, desc = "open the document" },
 				},
 			},
 		},

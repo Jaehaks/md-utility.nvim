@@ -64,12 +64,12 @@ require('md-utility').setup({
       '.obsidian/',
       '.marksman.toml',
     },
-	-- Insert title when link is inserted.
-	-- When you insert external file link(not *.md file) using 'wiki', title will be removed although 'autotitle' is nil.
-	-- nil : empty title
-	-- filename : set filename as title only.
-	-- full : set filename with relative path as title.
-	autotitle = 'filename',
+    -- Insert title when link is inserted.
+    -- When you insert external file link(not *.md file) using 'wiki', title will be removed although 'autotitle' is nil.
+    -- nil : empty title
+    -- filename : set filename as title only.
+    -- full : set filename with relative path as title.
+    autotitle = 'filename',
   },
   paste = {
     -- fun(ctx) : string
@@ -92,10 +92,29 @@ require('md-utility').setup({
     autoguess_tab = true, -- if user enter <TAB>, it guesses marker shape depends on adjacent usage.
   },
   follow_link = {
-      image_opener = 'start ""', -- image viewer command when the link under cursor is image.
-      web_opener   = 'brave',    -- web browser command when the link under cursor is web link.
-      md_opener    = 'split',    -- vim command when the link under cursor is file or header link.
-      file_opener  = 'start ""', -- system command when the link under cursor is other file which is not image or md file
+    image_opener = 'start ""', -- image viewer command when the link under cursor is image.
+    web_opener   = 'brave',    -- web browser command when the link under cursor is web link.
+    md_opener    = 'split',    -- vim command when the link under cursor is file or header link.
+    file_opener  = 'start ""', -- system command when the link under cursor is other file which is not image or md file
+  },
+  image = {
+    -- 'sixel' is supported only until now.
+    engine = 'sixel',
+    -- set maximum {width, height} of window
+    -- if 'nil', image preview is shown the real size of the image as default.
+    -- It is limited to the size that can fit within the current terminal.
+    max_size = nil,
+    -- set 'win_opts' for nvim_open_win()
+    -- Do not set {width, height} field anytime.
+    -- Do not set {row, col} field if you set 'relative=cursor'
+    win_opts = {
+      relative = "cursor",
+      row = 1,
+      col = 0,
+      style = "minimal",
+      border = "rounded",
+      noautocmd = true,
+    }
   }
 })
 ```
@@ -340,6 +359,20 @@ vim.keymap.set('n', 'gf', function () md.follow_link() end, {buffer = true, desc
 
 https://github.com/user-attachments/assets/314dfb68-85b3-4dc5-91a0-b6d2e78cca3a
 
+## 7) `preview_image()`
 
+### Purpose
 
+Show preview image in image file link under cursor.
+> [!NOTE]
+> It is implemented to view a preview even in Windows-terminal whose version supports sixel.
+> It acknowledged implementation method of `image.nvim`.
+
+### Usages
+
+Place your cursor over the link and run `preview_image()`.
+
+```lua
+vim.keymap.set('n', '<leader>mi', function () md.preview_image() end, {buffer = true, desc = 'Show preview image of link under cursor'})
+```
 

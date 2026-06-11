@@ -6,6 +6,7 @@
 ---@field paste md-utility.config.paste
 ---@field autolist md-utility.config.autolist
 ---@field follow_link md-utility.config.follow_link
+---@field image md-utility.config.image
 
 
 
@@ -54,6 +55,11 @@
 ---@field md_opener string
 ---@field file_opener string
 
+-- image ----------------------------------------------------
+---@class md-utility.config.image
+---@field engine string sixel
+---@field max_size [integer, integer]? [width height]
+---@field win_opts vim.api.keyset.win_config
 
 
 -- link_picker --------------------------------------------

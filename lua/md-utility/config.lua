@@ -36,6 +36,25 @@ local default_config = {
 		web_opener   = 'brave',    -- web browser command when the link under cursor is web link.
 		md_opener    = 'split',    -- vim command when the link under cursor is file or header link.
 		file_opener  = 'start ""', -- system command when the link under cursor is other file which is not image or md file
+	},
+	image = {
+		-- 'sixel' is supported only until now.
+		engine = 'sixel',
+		-- set maximum {width, height} of window
+		-- if 'nil', image preview is shown the real size of the image as default.
+		-- It is limited to the size that can fit within the current terminal.
+		max_size = nil,
+		-- set 'win_opts' for nvim_open_win()
+		-- Do not set {width, height} field anytime.
+		-- Do not set {row, col} field if you set 'relative=cursor'
+		win_opts = {
+			relative = "cursor",
+			row = 1,
+			col = 0,
+			style = "minimal",
+			border = "rounded",
+			noautocmd = true,
+		}
 	}
 }
 

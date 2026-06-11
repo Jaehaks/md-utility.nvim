@@ -253,7 +253,7 @@ local check_link = function ()
 
 		-- if link doesn't exist
 		if not ms and not ws then
-			vim.notify('Link doese not exist under the cursor!', vim.log.levels.ERROR)
+			vim.notify('[md-utility] Link doese not exist under the cursor!', vim.log.levels.ERROR)
 			return nil, nil
 		end
 
@@ -272,6 +272,7 @@ local check_link = function ()
 		end
 	end
 end
+M.check_link = check_link
 
 -- get contents of the whole link url
 ---@param raw_link string whole link format contents
@@ -285,8 +286,9 @@ local function get_linkpath(raw_link, style)
 	end
 	return ''
 end
+M.get_linkpath = get_linkpath
 
--- get absolute file path in root director from relative path of file
+-- get absolute file path in root directory from relative path of file
 ---@param rootdir string root directory which is base.
 ---@param filepath string relative path of file
 ---@return string? absolute path of file
@@ -334,6 +336,7 @@ local function get_absolutefile(rootdir, filepath)
 	end
 	return rg_file[1]
 end
+M.get_absolutefile = get_absolutefile
 
 M.follow_link = function ()
 	-- get full link format

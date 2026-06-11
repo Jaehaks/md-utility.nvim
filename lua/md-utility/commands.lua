@@ -6,6 +6,7 @@ local Config = require('md-utility.config')
 local Autolist = require('md-utility.autolist')
 local AddStrong = require('md-utility.addstrong')
 local Links = require('md-utility.links')
+local Image = require('md-utility.image')
 
 ---@param style string
 M.file_picker = function(style)
@@ -91,6 +92,10 @@ M.autolist_tab = function (reverse)
 	end
 end
 
+-- show preview image of link under cursor
+M.preview_image = function ()
+	Image.preview_image()
+end
 
 
 return M

@@ -16,6 +16,7 @@ I will continue to add features whenever I think it's necessary
 - [fd](https://github.com/sharkdp/fd) : for `follow_link`
 - [ripgrep](https://github.com/BurntSushi/ripgrep) : for `follow_link()`, `file_picker()`
 - [Neovim v0.11+](https://github.com/neovim/neovim)
+- [Windows terminal v1.22.10352.0+](https://github.com/microsoft/terminal) : for `preview_image()`
 
 
 # Installation
